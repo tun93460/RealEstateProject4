@@ -1,0 +1,161 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    /* Using registration model that contains an account and security questions */
+}
+@model Project4.Models.AccountRegistrationViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<form asp-controller="Account" asp-action="Register" method="post">
+
+    <div class="form-group"></div>
+
+    <h1>Account Info</h1>
+    @{/*This should determine if workInfo controls are visible for brokers and not regular users*/}
+    <div class="form-group">
+        <label asp-for="Account.AccountType" class="form-label">Account Type</label>
+        <select asp-for="Account.AccountType" class="form-control">
+            <option value="">Select an account Type</option>
+            <option value="User">User</option>
+            <option value="Broker">Broker</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Account.AccountName" class="form-label">Username</label>
+        <input asp-for="Account.AccountName" placeholder="AccountName" class="form-control" />
+        <span asp-validation-for="Account.AccountName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Account.AccountPassword" class="form-label">Password</label>
+        <input asp-for="Account.AccountPassword" type="password" placeholder="AccountPassword" class="form-control" />
+        <span asp-validation-for="Account.AccountPassword" class="text-danger"></span>
+    </div>
+
+    <h1>Personal Info - Address</h1>
+    <div class="form-group">
+        <label asp-for="Account.PersonalInfo.Address.Street" class="form-label">Street</label>
+        <input asp-for="Account.PersonalInfo.Address.Street" placeholder="Street" class="form-control" />
+        <span asp-validation-for="Account.PersonalInfo.Address.Street" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Account.PersonalInfo.Address.City" class="form-label">City</label>
+        <input asp-for="Account.PersonalInfo.Address.City" placeholder="City" class="form-control" />
+        <span asp-validation-for="Account.PersonalInfo.Address.City" class="text-danger"></span>
+    </div>
+
+    @{
+        /* Change to drop down list of states */
+    }
+    <div class="form-group">
+        <label asp-for="Account.PersonalInfo.Address.State" class="form-label">State</label>
+        <input asp-for="Account.PersonalInfo.Address.State" placeholder="State" class="form-control" />
+        <span asp-validation-for="Account.PersonalInfo.Address.State" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Account.PersonalInfo.Address.Zip" class="form-label">Zip Code</label>
+        <input asp-for="Account.PersonalInfo.Address.Zip" placeholder="Zip Code" class="form-control" />
+        <span asp-validation-for="Account.PersonalInfo.Address.Zip" class="text-danger"></span>
+    </div>
+
+    <h1>Personal Info</h1>
+    <div class="form-group">
+        <label asp-for="Account.PersonalInfo.Name" class="form-label">Name</label>
+        <input asp-for="Account.PersonalInfo.Name" placeholder="Name" class="form-control" />
+        <span asp-validation-for="Account.PersonalInfo.Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Account.PersonalInfo.PersonalEmail" class="form-label">Email</label>
+        <input asp-for="Account.PersonalInfo.PersonalEmail" placeholder="Email" class="form-control" />
+        <span asp-validation-for="Account.PersonalInfo.PersonalEmail" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Account.PersonalInfo.PersonalPhone" class="form-label">Phone</label>
+        <input asp-for="Account.PersonalInfo.PersonalPhone" placeholder="Phone" class="form-control" />
+        <span asp-validation-for="Account.PersonalInfo.PersonalPhone" class="text-danger"></span>
+    </div>
+
+
+    <h1>Work Info - Address</h1>
+    <div class="form-group">
+        <label asp-for="Account.WorkInfo.Address.Street" class="form-label">Street</label>
+        <input asp-for="Account.WorkInfo.Address.Street" placeholder="Street" class="form-control" />
+        <span asp-validation-for="Account.WorkInfo.Address.Street" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Account.WorkInfo.Address.City" class="form-label">City</label>
+        <input asp-for="Account.WorkInfo.Address.City" placeholder="City" class="form-control" />
+        <span asp-validation-for="Account.WorkInfo.Address.City" class="text-danger"></span>
+    </div>
+
+    @{
+        /* Change to drop down list of states */
+    }
+    <div class="form-group">
+        <label asp-for="Account.WorkInfo.Address.State" class="form-label">State</label>
+        <input asp-for="Account.WorkInfo.Address.State" placeholder="State" class="form-control" />
+        <span asp-validation-for="Account.WorkInfo.Address.State" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Account.WorkInfo.Address.Zip" class="form-label">Zip Code</label>
+        <input asp-for="Account.WorkInfo.Address.Zip" placeholder="Zip Code" class="form-control" />
+        <span asp-validation-for="Account.WorkInfo.Address.Zip" class="text-danger"></span>
+    </div>
+
+    <h1>Work Info</h1>
+    <div class="form-group">
+        <label asp-for="Account.WorkInfo.CompanyName" class="form-label">Company Name</label>
+        <input asp-for="Account.WorkInfo.CompanyName" placeholder="Company Name" class="form-control" />
+        <span asp-validation-for="Account.WorkInfo.CompanyName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Account.WorkInfo.WorkEmail" class="form-label">Work Email</label>
+        <input asp-for="Account.WorkInfo.WorkEmail" placeholder="Work Email" class="form-control" />
+        <span asp-validation-for="Account.WorkInfo.WorkEmail" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Account.WorkInfo.WorkPhone" class="form-label">Work Phone</label>
+        <input asp-for="Account.WorkInfo.WorkPhone" placeholder="Work Phone" class="form-control" />
+        <span asp-validation-for="Account.WorkInfo.WorkPhone" class="text-danger"></span>
+    </div>
+
+    <h1>Security & Recovery</h1>
+    <div class="form-group">
+        <input asp-for="Account.RememberMe" type="checkbox" class="form-control" />
+        <label asp-for="Account.RememberMe" class="form-label">Remember Me</label>
+    </div>
+
+    @{ /* idk if this works / exactly how it works */}
+    <div class="form-group">
+        @for (int i = 0; i < Model.SecurityQuestions.Count; i++)
+        {
+            <label asp-for="SecurityQuestions[i].Question.QuestionID" class="form-controle">Security Question #@i</label>
+            <select asp-for="SecurityQuestions[i].Question.QuestionID">
+                @foreach (Project4.Models.AccountSecurityQuestion question in Model.SecurityQuestions)
+                {
+                    <option value="@question.Question.QuestionID">@question.Question.QuestionText</option>
+                }
+            </select>
+            <input type="text" asp-for="SecurityQuestions[i].AnswerText" placeholer="Answer" />
+        }
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Register</button>
+    </div>
+
+    <div>
+        @ViewData["Message"]
+    </div>
+
+</form>

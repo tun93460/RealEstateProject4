@@ -1,0 +1,48 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    //cookie management
+    //var username = Request.Cookies["RememberMe"];
+    //var password = Request.Cookies["Password"];
+}
+@model Project4.Models.Account
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+
+<form asp-controller="Account" asp-action="Login" method="POST">
+    <div id="login" class="form-group">
+        <h2>Login</h2>
+        <label asp-for="AccountName" class="form-label">Username</label>
+        <input asp-for="AccountName" placeholder="Username" class="form-control" />
+        <span asp-validation-for="AccountName" class="text-danger"></span>
+
+        <label asp-for="AccountPassword" class="form-label">Password</label>
+        <input asp-for="AccountPassword" type="password" placeholder="Password" class="form-control" />
+        <span asp-validation-for="AccountPassword" class="text-danger"></span>
+
+        <br />
+        
+        <button type="submit" class="btn btn-primary">Login</button>
+        <div class="form-check">
+            <input asp-for="RememberMe" type="checkbox" class="form-control-input" />
+            <label asp-for="RememberMe" class="form-check-label">Remember Me</label>
+
+        </div>
+        
+        <br />
+
+    </div>
+    <div class="form-group">
+        @{/* these links don't have functions yet
+        * <a asp-controller="Account" asp-action="ClearCookies">Clear Cookies</a>
+        * <a asp-controller="Account" asp-action="ForgotPassword">Forgot Password</a>
+        */}
+        
+        <a asp-controller="Account" asp-action="Register">Register New Account</a>
+    </div>
+    <div>
+        @ViewData["Message"]
+    </div>
+</form>
