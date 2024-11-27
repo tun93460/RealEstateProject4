@@ -131,12 +131,12 @@
 
     <h1>Security & Recovery</h1>
     <div class="form-group">
-        <input asp-for="Account.RememberMe" type="checkbox" class="form-control" />
-        <label asp-for="Account.RememberMe" class="form-label">Remember Me</label>
+        <input asp-for="Account.RememberMe" type="checkbox" class="form-control-input" />
+        <label asp-for="Account.RememberMe" class="form-label-check">Remember Me</label>
     </div>
 
     @{ /* idk if this works / exactly how it works */}
-    <div class="form-group">
+    @* <div class="form-group">
         @for (int i = 0; i < Model.SecurityQuestions.Count; i++)
         {
             <label asp-for="SecurityQuestions[i].Question.QuestionID" class="form-controle">Security Question #@i</label>
@@ -148,7 +148,7 @@
             </select>
             <input type="text" asp-for="SecurityQuestions[i].AnswerText" placeholer="Answer" />
         }
-    </div>
+    </div> *@
 
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Register</button>
