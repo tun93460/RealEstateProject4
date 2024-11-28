@@ -2,17 +2,15 @@
 {
     public class Address
     {
-        private int addressID;
-        private string propType;
+        private int homeID;
         private string city;
         private string state;
         private string street;
         private string zip;
 
-        public Address(int addressID, string propType, string city, string state, string street, string zip)
+        public Address(int homeID, string city, string state, string street, string zip)
         {
-            this.addressID = addressID;
-            this.propType = propType;
+            this.homeID = homeID;
             this.city = city;
             this.state = state;
             this.street = street;
@@ -26,15 +24,10 @@
 
         public int AddressID
         {
-            get { return addressID; }
-            set { addressID = value; }
+            get { return homeID; }
+            set { homeID = value; }
         }
 
-        public String PropType
-        {
-            get { return propType; }
-            set { propType = value; }
-        }
 
         public String City
         {
