@@ -6,38 +6,59 @@
     <h2>Search Homes</h2>
     <form asp-controller="Home" asp-action="SearchHomes" method="post">
         <div class="form-group">
-            <label for="location">Location</label>
-            <input type="text" id="location" name="location" class="form-control" placeholder="Enter Location" />
+            <label class="form-label">City</label>
+            <input type="text" id="City" name="City" class="form-control" placeholder="Enter City" />
         </div>
 
         <div class="form-group">
-            <label for="propertyType">Property Type</label>
-            <input type="text" id="propertyType" name="propertyType" class="form-control" placeholder="Enter Property Type" />
+            <label class="form-label">State</label>
+            <input type="text" id="State" name="State" class="form-control" placeholder="Enter State" />
         </div>
 
         <div class="form-group">
-            <label for="minBedrooms">Min Bedrooms</label>
+            <label class="form-label">Zip Code</label>
+            <input type="text" id="Zip" name="Zip" class="form-control" placeholder="Enter Zip Code" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Property Type</label>
+            <select name="propertyType" id="propertyType" class="form-control-select">
+                <option value="">Select a property Type</option>
+                <option value="Condo">Condo</option>
+                <option value="Townhouse">Townhouse</option>
+                <option value="Single Family">Single Family</option>
+                <option value="Multi Family">Multi Family</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Min Bedrooms</label>
             <input type="number" id="minBedrooms" name="minBedrooms" class="form-control" placeholder="Enter Minimum Bedrooms" />
         </div>
 
         <div class="form-group">
-            <label for="minBathrooms">Min Bathrooms</label>
+            <label class="form-label">Min Bathrooms</label>
             <input type="number" id="minBathrooms" name="minBathrooms" class="form-control" placeholder="Enter Minimum Bathrooms" />
         </div>
 
         <div class="form-group">
-            <label for="minPrice">Min Price</label>
+            <label class="form-label">Min Price</label>
             <input type="text" id="minPrice" name="minPrice" class="form-control" placeholder="Enter Minimum Price" />
         </div>
 
         <div class="form-group">
-            <label for="maxPrice">Max Price</label>
+            <label class="form-label">Max Price</label>
             <input type="text" id="maxPrice" name="maxPrice" class="form-control" placeholder="Enter Maximum Price" />
         </div>
 
-
         <div class="form-group">
-            <label for="amenities">Amenities</label>
+            <label class="form-label">Minimum Home Size</label>
+            <input type="text" id="minHomeSize" name="minHomeSize" class="form-control" placeholder="Enter Minimum Home Size" />
+        </div>
+
+        @{ /* change to checkbox list */}
+        <div class="form-group">
+            <label class="form-label">Amenities</label>
             <input type="text" id="amenities" name="amenities" class="form-control" placeholder="Enter Amenities" />
         </div>
 
@@ -47,18 +68,30 @@
 
 @model List<Project4.Models.Home>
 
-@{
-    ViewData["Title"] = "Search Results";
+<h2>Search Results</h2>
+@if (Model.Count == 0)
+{
+    <p>No results found.</p>
 }
+<div class="card-container">
+    <div class="row">
+        @foreach (Home h in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="" class="card-image-top" alt="House Image" />
+                    <div class="card-body">
+                        <h5 class="card-title">@h.PropertyType</h5>
+                        <p class="card-text">Price: $@h.Price</p>
+                        <p class="card-text">Address: @h.Address.Street @h.Address.City, @h.Address.State @h.Address.Zip</p>
+                        <a asp-controller="Home" asp-action="ViewHome" asp-route-id="@h.HomeID" class="btn btn-primary">View Home</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 
-<div class="container">
-    <h2>Search Results</h2>
-
-    @if (Model.Count == 0)
-    {
-        <p>No results found.</p>
-    }
-    else
+    @* else
     {
         <table class="table">
             <thead>
@@ -93,7 +126,7 @@
                     </tr>
                 }
             </tbody>
-        </table>
-    }
+        </table> 
+    }*@
 </div>
 

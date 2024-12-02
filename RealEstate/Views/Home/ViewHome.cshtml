@@ -1,0 +1,74 @@
+﻿@{
+
+}
+
+@model Project4.Models.Home
+
+<div class="container mt-4">
+	<h1 class="mb-4">@Model.PropertyType - $@Model.Price</h1>
+
+	<div class="row">
+		<!-- Home Images -->
+		<div class="col-md-6">
+			<div id="homeCarousel" class="carousel slide" data-bs-ride="carousel">
+				<div class="carousel-inner">
+					@* @for (int i = 0; i < Model.Images.Count; i++)
+					{
+						<div class="carousel-item @(i == 0 ? "active" : "")">
+							<!-- image data -->
+						</div>
+					} *@
+				</div>
+				<button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">Previous</span>
+				</button>
+				<button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">Next</span>
+				</button>
+			</div>
+		</div>
+
+
+		<div class="col-md-6">
+			<h3>Details</h3>
+			<p><strong>Address:</strong> @Model.Address.Street, @Model.Address.City, @Model.Address.State @Model.Address.Zip</p>
+			<p><strong>Size:</strong> @Model.Size sqft</p>
+			<p><strong>Bedrooms:</strong> @Model.Bedrooms</p>
+			<p><strong>Bathrooms:</strong> @Model.Bathrooms</p>
+			<p><strong>Property Type:</strong> @Model.PropertyType</p>
+			<p><strong>Date Listed:</strong> @Model.DateEntered</p>
+			<p><strong>HVAC Info:</strong> @Model.HvacInfo</p>
+			<p><strong>Year Built:</strong> @Model.YearBuilt</p>
+			<p><strong>Garage Type:</strong> @Model.GarageType</p>
+			<p><strong>Home Description:</strong> @Model.HomeDesc</p>
+			<p><strong>Home Status:</strong> @Model.Status</p>
+		</div>
+	</div>
+
+	<div class="col-md-6">
+		<div class="mt-4">
+			<h3>Amenities</h3>
+
+		</div>
+
+		<div class="mt-4">
+			<h3>Utilities</h3>
+
+		</div>
+
+		<div class="mt-4">
+			<h3>Rooms</h3>
+
+		</div>
+	</div>
+
+	<div class="col-md-6">
+		<div class="mt-4">
+			<a asp-controller="Home" asp-action="Edit" asp-route-id="@Model.HomeID" class="btn btn-primary">Edit Home</a>
+		</div>
+	</div>
+	
+
+</div>

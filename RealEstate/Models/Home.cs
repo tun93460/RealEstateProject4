@@ -8,27 +8,61 @@ namespace Project4.Models
         private int homeID;
         private Address address;
         private string propertyType;
-        private decimal price;
-        private int size;
+        private double price;
+        private double size;
         private int bedrooms;
         private int bathrooms;
+        private DateTime dateEntered;
+        private string hvacInfo;
+        private int yearBuilt;
+        private string garageType;
+        private string homeDesc;
+        private string status;
+        private List<Room> rooms;
         private List<Amenity> amenities;
+        private List<Utility> utilities;
+        private List<HomeImage> homeImages;
 
-        public Home(int homeID, Address address, string propertyType, decimal price, int size, int bedrooms, int bathrooms)
-        {
-            this.homeID = homeID;
-            this.address = address;
-            this.propertyType = propertyType;
-            this.price = price;
-            this.size = size;
-            this.bedrooms = bedrooms;
-            this.bathrooms = bathrooms;
-            this.amenities = new List<Amenity>();
-        }
+
 
         public Home()
         {
-            this.amenities = new List<Amenity>();
+        }
+
+        public DateTime DateEntered
+        {
+            get { return dateEntered; }
+            set { dateEntered = value; }
+        }
+
+        public string HvacInfo
+        {
+            get { return hvacInfo; }
+            set {  hvacInfo = value; }
+        }
+
+        public int YearBuilt
+        {
+            get { return yearBuilt; }
+            set {  yearBuilt = value; }
+        }
+
+        public string GarageType
+        {
+            get { return garageType; }
+            set { garageType = value; }
+        }
+
+        public string HomeDesc
+        {
+            get { return homeDesc; }
+            set { homeDesc = value; }
+        }
+
+        public string Status
+        {
+            get { return status; }
+            set { status = value; }
         }
 
         public int HomeID
@@ -52,13 +86,13 @@ namespace Project4.Models
         }
 
         [Required(ErrorMessage = "You must enter a price.")]
-        public decimal Price
+        public double Price
         {
             get { return price; }
             set { price = value; }
         }
 
-        public int Size
+        public double Size
         {
             get { return size; }
             set { size = value; }
@@ -76,10 +110,28 @@ namespace Project4.Models
             set { bathrooms = value; }
         }
 
+        public List<Room> Rooms
+        {
+            get { return rooms; }
+            set { rooms = value; }
+        }
+
+        public List<Utility> Utilities
+        {
+            get { return utilities; }
+            set { utilities = value; }
+        }
+
         public List<Amenity> Amenities
         {
             get { return amenities; }
             set { amenities = value; }
+        }
+
+        public List<HomeImage> HomeImages
+        {
+            get { return homeImages; }
+            set { homeImages = value; }
         }
     }
 }

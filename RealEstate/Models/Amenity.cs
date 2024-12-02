@@ -2,19 +2,38 @@
 {
     public class Amenity
     {
-        public string AmenityDescription { get; set; }
-        public int HomeID { get; set; }
-
+        private int amenitiesID;
+        private string amenitiesDescription;
+        private string amenitiesName;
+        
         public Amenity()
         {
-            AmenityDescription = "";
-            HomeID = 0;
+        
         }
 
-        public Amenity(string amenityDescription, int homeID)
+        public Amenity(int amenitiesID, string amenitiesDescription, string amenitiesName)
         {
-            AmenityDescription = amenityDescription;
-            HomeID = homeID;
+            AmenitiesID = amenitiesID;
+            AmenitiesDescription = amenitiesDescription;
+            AmenitiesName = amenitiesName;
+        }
+
+        public int AmenitiesID
+        {
+            get { return amenitiesID; }
+            set { amenitiesID = value; }
+        }
+
+        public string AmenitiesDescription
+        {
+            get { return amenitiesDescription; }
+            set { amenitiesDescription = value; }
+        }
+
+        public string AmenitiesName
+        {
+            get { return amenitiesName; }
+            set { amenitiesName = value; }
         }
     }
 }
