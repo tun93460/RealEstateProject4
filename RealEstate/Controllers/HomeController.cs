@@ -91,7 +91,16 @@ namespace Project4.Controllers
         {
             if (ModelState.IsValid)
             {
-                // HomeDataAccess.Update Home
+                //updates
+
+                //address
+
+                //utils
+
+                //amenities
+
+                //images
+
                 return RedirectToAction("Index");
             }
             return View(home);
