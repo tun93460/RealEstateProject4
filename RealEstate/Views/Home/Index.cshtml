@@ -3,21 +3,11 @@
 }
 
 <div class="container">
-    <h2>Search Homes</h2>
+    <h2>Search Homes - @ViewData["Message"]</h2>
     <form asp-controller="Home" asp-action="SearchHomes" method="post">
         <div class="form-group">
-            <label class="form-label">City</label>
-            <input type="text" id="City" name="City" class="form-control" placeholder="Enter City" />
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">State</label>
-            <input type="text" id="State" name="State" class="form-control" placeholder="Enter State" />
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Zip Code</label>
-            <input type="text" id="Zip" name="Zip" class="form-control" placeholder="Enter Zip Code" />
+            <label class="form-label">Location</label>
+            <input type="text" id="Location" name="Location" class="form-control" placeholder="Enter Location" />
         </div>
 
         <div class="form-group">
@@ -90,43 +80,5 @@
             </div>
         }
     </div>
-
-    @* else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Address</th>
-                    <th>Property Type</th>
-                    <th>Price</th>
-                    <th>Size (sq ft)</th>
-                    <th>Bedrooms</th>
-                    <th>Bathrooms</th>
-                    <th>Amenities</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var home in Model)
-                {
-                    <tr>
-                        <td>@home.Address</td>
-                        <td>@home.PropertyType</td>
-                        <td>@home.Price</td>
-                        <td>@home.Size</td>
-                        <td>@home.Bedrooms</td>
-                        <td>@home.Bathrooms</td>
-                        <td>
-                            @foreach (var amenity in home.Amenities)
-                            {
-                                <span>@amenity.AmenityDescription</span>
-
-                                <br />
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table> 
-    }*@
 </div>
 

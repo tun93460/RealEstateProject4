@@ -8,55 +8,76 @@ namespace RealEstate.Controllers
         AccountDataAccess ada = new AccountDataAccess();
         int count;
 
+        public IActionResult Logout()
+        {
+            // clear the session
+            HttpContext.Session.Clear();
+
+            // clear login cookies
+            Response.Cookies.Delete("Name");
+            Response.Cookies.Delete("Password");
+
+            return RedirectToAction("Login", "Account");
+        }
+
         [HttpGet]
         public IActionResult Login()
         {
-            return View(new Account());
+            ViewData["Title"] = "Login";
+
+            //check for login cookies
+            if (Request.Cookies.ContainsKey("Name") && Request.Cookies.ContainsKey("Password"))
+            {
+                HttpContext.Session.SetString("Account", Request.Cookies["Name"].ToString());
+                return RedirectToAction("Index", "Home");
+            }
+            return View(new LoginViewModel());
         }
 
         [HttpPost]
-        public IActionResult Login(Account account)
+        public IActionResult Login(LoginViewModel model)
         {
             ViewData["Title"] = "Login";
 
             if (ModelState.IsValid)
             {
-                //call stored procedure to check if account exists
-                //returns 1 if account found
-                //maybe replace with API call
-                count = ada.AuthenticateAccount(account);
-
-                //check remember me to set cookies
-                if (account.RememberMe)
-                {
-                    //set cookie for account creds
-                }
+                // Call stored procedure to authenticate
+                count = ada.AuthenticateAccount(model);
 
                 if (count > 0)
                 {
-                    //account found
-                    ViewData["Message"] = "Login successful! Welcome, " + account.AccountName;
+                    // Account found
+                    HttpContext.Session.SetString("AccountName", model.AccountName);
+                    
+                    //check for cookies
+                    if (model.RememberMe)
+                    {
+                        CookieOptions options = new CookieOptions
+                        {
+                            Expires = DateTime.Now.AddDays(7),
+                            HttpOnly = true,
+                            Secure = true,
+                            IsEssential = true
+                        };
+                        Response.Cookies.Append("Name", model.AccountName, options);
+                        Response.Cookies.Append("Password", model.AccountPassword, options);
+                    }
 
-                    //add acconut to session
-                    HttpContext.Session.SetInt32("Account", account.AccountID);
-
-                    //redirect authenticated user to homepage
                     return RedirectToAction("Index", "Home");
                 }
-                else if (count == 0)
+                else
                 {
-                    //no acconuts found
                     ViewData["Message"] = "Invalid username or password.";
                 }
             }
             else
             {
-                //invalid model
                 ViewData["Message"] = "Please fill in all required fields.";
             }
 
-            return View(account);
+            return View(model);
         }
+
 
         [HttpGet]
         public IActionResult Register()
@@ -73,12 +94,12 @@ namespace RealEstate.Controllers
             //populate security question ddl
             //here are some test questions
             SecurityQuestion ques1 = new SecurityQuestion(1, "Pet Name", "Please enter the name of your first pet: ");
-            SecurityQuestion ques2= new SecurityQuestion(2, "Street Name", "What is the name of the street you grew up on? ");
+            SecurityQuestion ques2 = new SecurityQuestion(2, "Street Name", "What is the name of the street you grew up on? ");
 
             questionList.Add(new AccountSecurityQuestion("Bella", model.Account, ques1));
             questionList.Add(new AccountSecurityQuestion("Kingswood", model.Account, ques2));
-                                
-            
+
+
 
             ViewData["SecurityQuestions"] = questionList;
 
@@ -106,20 +127,29 @@ namespace RealEstate.Controllers
                 //insert account
                 account.AccountID = ada.RegisterAccount(account.AccountName, account.AccountPassword, account.PersonalInfo.PersonalInfoID, account.WorkInfo.WorkInfoID, account.AccountType, account.RememberMe);
 
-                //check for cookies enabled
-                if (model.Account.RememberMe)
-                {
-                    //add cookies
-                }
-
-                //count = db result
+                //check if acconut was entered successfully
                 if (account.AccountID > 0)
                 {
+                    //check for login cookies
+                    if (account.RememberMe)
+                    {
+                        //create cookie
+                        CookieOptions options = new CookieOptions
+                        {
+                            Expires = DateTime.Now.AddDays(7),
+                            HttpOnly = true,
+                            Secure = true,
+                            IsEssential = true,
+                        };
+                        Response.Cookies.Append("Name", account.AccountName, options);
+                        Response.Cookies.Append("Password", account.AccountPassword, options);
+                    }
+                    
                     //account registered
                     ViewData["Message"] = "Registration successful! Welcome, " + account.AccountName;
 
-                    //add acconut to session
-                    HttpContext.Session.SetInt32("Account", account.AccountID);
+                    //add account to session
+                    HttpContext.Session.SetInt32("AccountID", account.AccountID);
 
                     //redirect registered user to homepage
                     return RedirectToAction("Index", "Home");

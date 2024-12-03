@@ -113,25 +113,15 @@ namespace Project4.Models
             return homes;
         }
 
-        public List<Home> SearchHomes(string city, string state, string zip, string propertyType, int minBedrooms, int minBathrooms, double minPrice, double maxPrice, double minHomeSize)
+        public List<Home> SearchHomes(string location, string propertyType, int minBedrooms, int minBathrooms, double minPrice, double maxPrice, double minHomeSize)
         {
             SqlCommand cmdSearchHomes = new SqlCommand("SearchHomes");
             cmdSearchHomes.CommandType = CommandType.StoredProcedure;
 
-            if (!string.IsNullOrEmpty(city))
-                cmdSearchHomes.Parameters.AddWithValue("@City", city);
+            if (!string.IsNullOrEmpty(location))
+                cmdSearchHomes.Parameters.AddWithValue("@Location", location);
             else
                 cmdSearchHomes.Parameters.AddWithValue("@City", DBNull.Value);
-            
-            if (!string.IsNullOrEmpty(state))
-                cmdSearchHomes.Parameters.AddWithValue("@State", state);
-            else
-                cmdSearchHomes.Parameters.AddWithValue("@State", DBNull.Value);
-
-            if (!string.IsNullOrEmpty(zip))
-                cmdSearchHomes.Parameters.AddWithValue("@Zip", zip);
-            else
-                cmdSearchHomes.Parameters.AddWithValue("@Zip", DBNull.Value);
 
             if (!string.IsNullOrEmpty(propertyType))
                 cmdSearchHomes.Parameters.AddWithValue("@PropType", propertyType);

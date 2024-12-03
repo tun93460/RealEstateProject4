@@ -11,14 +11,14 @@ namespace Project4.Models
         DataSet ds = new DataSet();
         int count;
         int outputID;
-        public int AuthenticateAccount(Account account)
+        public int AuthenticateAccount(LoginViewModel model)
         {
             objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "AuthenticateAccount";
 
-            objCommand.Parameters.AddWithValue("@accountName", account.AccountName);
-            objCommand.Parameters.AddWithValue("@accountPassword", account.AccountPassword);
+            objCommand.Parameters.AddWithValue("@accountName", model.AccountName);
+            objCommand.Parameters.AddWithValue("@accountPassword", model.AccountPassword);
 
             ds = dbObj.GetDataSet(objCommand);
 

@@ -30,9 +30,9 @@ namespace Project4.Controllers
 
 
         [HttpPost]
-        public IActionResult SearchHomes(string city, string state, string zip, string propertyType, int minBedrooms, int minBathrooms, double minPrice, double maxPrice, double minHomeSize)
+        public IActionResult SearchHomes(string location, string propertyType, int minBedrooms, int minBathrooms, double minPrice, double maxPrice, double minHomeSize)
         {
-                List<Home> homes = hda.SearchHomes(city, state, zip, propertyType, minBedrooms, minBathrooms, minPrice, maxPrice, minHomeSize);
+                List<Home> homes = hda.SearchHomes(location, propertyType, minBedrooms, minBathrooms, minPrice, maxPrice, minHomeSize);
                 
 
                 return View("Index", homes);
