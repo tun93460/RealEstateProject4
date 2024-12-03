@@ -12,8 +12,15 @@ namespace Project4.Models
         SqlCommand objCommand = new SqlCommand();
         DataSet ds = new DataSet();
         List<Home> homes = new List<Home>();
-        Home home = new Home();
-
+        List<Amenity> amenities = new List<Amenity>();
+        List<Utility> utilities = new List<Utility>();
+        List<Room> rooms = new List<Room>();
+        List<HomeImage> images = new List<HomeImage>();
+        Home home;
+        Amenity amenity;
+        Utility utility;
+        Room room;
+        HomeImage image;
 
 
         public Home GetHomeByID(int homeID)
@@ -29,7 +36,6 @@ namespace Project4.Models
                 Direction = ParameterDirection.Input,
                 SqlDbType = SqlDbType.Int
             };
-
             objCommand.Parameters.Add(inputID);
 
             ds = dbConnect.GetDataSet(objCommand);
@@ -63,67 +69,24 @@ namespace Project4.Models
                 };
 
                 //add amenities
-                if (row["amenitiesID"] != DBNull.Value)
-                {
-                    Amenity amenity = new Amenity
-                    {
-                        AmenitiesID = Convert.ToInt32(row["amenitiesID"]),
-                        AmenitiesName = row["amenitiesType"].ToString(),
-                        AmenitiesDescription = row["amenitiesDescription"].ToString()
-                    };
-                    //home.Amenities.Add(amenity);
-                }
+                home.Amenities = GetAmenitiesByHomeID(homeID);
 
                 //add utilities
-                if (row["utilitiesID"] != DBNull.Value)
-                {
-                    Utility utility = new Utility
-                    {
-                        UtilityID = Convert.ToInt32(row["utilitiesID"]),
-                        UtilityType = row["utilitiesType"].ToString(),
-                        UtilityDescription = row["utilitiesDescription"].ToString()
-                    };
-                    //home.Utilities.Add(utility);
-                }
+                //home.Utilities = GetUtilitiesByHomeID(homeID);
 
                 //add rooms
-                if (row["roomID"] != DBNull.Value)
-                {
-                    Room room = new Room
-                    {
-                        RoomID = Convert.ToInt32(row["roomID"]),
-                        RoomType = row["roomType"].ToString(),
-                        RoomDescription = row["roomDescription"].ToString(),
-                        RoomLength = Convert.ToDouble(row["roomLength"]),
-                        RoomWidth = Convert.ToDouble(row["roomWidth"])
-                    };
-                    //home.Rooms.Add(room);
-                }
+                //home.Rooms = GetRoomsByHomeID(homeID);
 
                 //add Images
-                if (row["imageID"] != DBNull.Value)
-                {
-                    HomeImage image = new HomeImage
-                    {
-                        ImageID = Convert.ToInt32(row["imageID"]),
-                        ImageData = (byte[])row["imageData"],
-                        ImageCaption = row["imageCaption"].ToString(),
-                        FileExtension = row["fileExtension"].ToString(),
-                        ImageName = row["imageName"].ToString(),
-                        ImageType = row["imageType"].ToString(),
-                        ImageSize = Convert.ToInt32(row["imageSize"])
-                    };
-                    //home.HomeImages.Add(image);
-                }
+                //home.HomeImages = GetImagesByHomeID(homeID);
 
 
                 //calculate home size based on room dimensions
                 //foreach (Room room in home.Rooms)
-                {
-                    //home.Size += room.RoomLength * room.RoomWidth;
-                }
+                //{
+                //    home.Size += room.RoomLength * room.RoomWidth;
+                //}
             }
-
             objCommand.Parameters.Clear();
 
             return home;
@@ -213,13 +176,107 @@ namespace Project4.Models
             return homes;
         }
 
-        public DataSet GetAmenitiesByHomeID(int homeID)
+        public List<Amenity> GetAmenitiesByHomeID(int homeID)
         {
             SqlCommand cmdGetAmenities = new SqlCommand("GetAmenitiesByHomeID");
             cmdGetAmenities.CommandType = CommandType.StoredProcedure;
             cmdGetAmenities.Parameters.AddWithValue("@HomeID", homeID);
+            
+            ds = dbConnect.GetDataSetUsingCmdObj(cmdGetAmenities);
 
-            return dbConnect.GetDataSetUsingCmdObj(cmdGetAmenities);
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow row in ds.Tables[0].Rows)
+                {
+                    amenity = new Amenity
+                    {
+                        AmenitiesID = Convert.ToInt32(row["amenitiesID"]),
+                        AmenitiesDescription = row["amenitiesDescription"].ToString(),
+                        AmenitiesName = row["AmenitiesType"].ToString()
+                    };
+                    amenities.Add(amenity);    
+                }
+            }
+            return amenities;
+        }
+
+        public List<Utility> GetUtilitiesByHomeID(int homeID)
+        {
+            objCommand.CommandType = CommandType.StoredProcedure;
+            objCommand.CommandText = "GetUtilitiesByHomeID";
+            objCommand.Parameters.AddWithValue("@HomeID", homeID);
+
+            ds = dbConnect.GetDataSetUsingCmdObj(objCommand);
+
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow row in ds.Tables[0].Rows)
+                {
+                    utility = new Utility
+                    {
+                        UtilityID = Convert.ToInt32(row["utilitiesID"]),
+                        UtilityDescription = row["utilitiesDescription"].ToString(),
+                        UtilityType = row["utilitiesType"].ToString()
+                    };
+                    utilities.Add(utility);
+                }
+            }
+            objCommand.Parameters.Clear();
+            return utilities;
+        }
+
+        public List<Room> GetRoomsByHomeID(int homeID)
+        {
+            objCommand.CommandType = CommandType.StoredProcedure;
+            objCommand.CommandText = "GetRoomsByHomeID";
+            objCommand.Parameters.AddWithValue("@HomeID", homeID);
+
+            ds = dbConnect.GetDataSetUsingCmdObj(objCommand);
+
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow row in ds.Tables[0].Rows)
+                {
+                    room = new Room
+                    {
+                        RoomID = Convert.ToInt32(row["roomID"]),
+                        RoomDescription = row["roomDescription"].ToString(),
+                        RoomLength = Convert.ToDouble(row["roomLength"]),
+                        RoomWidth = Convert.ToDouble(row["roomWidth"]),
+                        RoomType = row["roomType"].ToString()
+                    };
+
+                    rooms.Add(room);
+                }
+            }
+            objCommand.Parameters.Clear();
+            return rooms;
+        }
+
+        public List<HomeImage> GetImagesByHomeID(int homeID)
+        {
+            objCommand.CommandType = CommandType.StoredProcedure;
+            objCommand.CommandText = "GetImagesByHomeID";
+            objCommand.Parameters.AddWithValue("@HomeID", homeID);
+
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow row in ds.Tables[0].Rows)
+                {
+                    image = new HomeImage
+                    {
+                        ImageID = Convert.ToInt32(row["imageID"]),
+                        ImageCaption = row["imageCaption"].ToString(),
+                        ImageData = row["imageData"] as Byte[],
+                        ImageName = row["ImageName"].ToString(),
+                        ImageSize = Convert.ToInt32(row["iamgeSize"]),
+                        ImageType = row["imageType"].ToString(),
+                        FileExtension = row["FileExtension"].ToString()
+                    };
+                    images.Add(image);
+                }
+            }
+            return images;
         }
     }
 }

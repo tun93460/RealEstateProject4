@@ -42,21 +42,7 @@ namespace Project4.Controllers
 
         private List<Amenity> GetAmenities(int homeID)
         {
-            DataSet dsAmenities = hda.GetAmenitiesByHomeID(homeID);
-
-            List<Amenity> amenities = new List<Amenity>();
-            if (dsAmenities.Tables.Count > 0)
-            {
-                foreach (DataRow row in dsAmenities.Tables[0].Rows)
-                {
-                    amenities.Add(new Amenity
-                    {
-                        AmenitiesDescription = row["amenitiesDescription"].ToString(),
-                        AmenitiesID = Convert.ToInt32(row["amenitiesID"]),
-                        AmenitiesName = row["amenitiesType"].ToString()
-                    });
-                }
-            }
+            List<Amenity> amenities = hda.GetAmenitiesByHomeID(homeID);
 
             return amenities;
         }
