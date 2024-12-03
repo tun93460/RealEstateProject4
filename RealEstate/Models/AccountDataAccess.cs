@@ -9,6 +9,7 @@ namespace Project4.Models
         DBConnect dbObj = new DBConnect();
         SqlCommand objCommand = new SqlCommand();
         DataSet ds = new DataSet();
+        Account account;
         int count;
         int outputID;
         public int AuthenticateAccount(LoginViewModel model)
@@ -88,7 +89,7 @@ namespace Project4.Models
             objCommand.Parameters.Clear();
             return outputID;
         }
-        
+
 
 
         public int RegisterPersonalInfo(int addressID, string personalPhone, string personalEmail)
@@ -114,14 +115,14 @@ namespace Project4.Models
             objCommand.Parameters.Clear();
             return outputID;
         }
-        
+
         public int RegisterWorkInfo(int addressID, string companyName, string workPhone, string workEmail)
         {
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "InsertWorkInfo";
 
             objCommand.Parameters.AddWithValue("@AddressID", addressID);
-            objCommand.Parameters.AddWithValue("@CompanyName", companyName);    
+            objCommand.Parameters.AddWithValue("@CompanyName", companyName);
             objCommand.Parameters.AddWithValue("@WorkPhone", workPhone);
             objCommand.Parameters.AddWithValue("@WorkEmail", workEmail);
 
@@ -139,5 +140,35 @@ namespace Project4.Models
             objCommand.Parameters.Clear();
             return outputID;
         }
+
+        public Account GetAccountByAccountName(string accountName)
+        {
+            objCommand.CommandType = CommandType.StoredProcedure;
+            objCommand.CommandText = "GetAccountByAccountName";
+
+            objCommand.Parameters.AddWithValue("@AccountName", accountName);
+
+            // Execute the command to fetch the dataset
+            ds = dbObj.GetDataSetUsingCmdObj(objCommand);
+
+            account = null; // Initialize account as null to handle cases where no data is returned
+
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0) // Check if the dataset and rows exist
+            {
+                DataRow row = ds.Tables[0].Rows[0]; // Assume only one row will be returned for a unique account name
+
+                account = new Account
+                {
+                    AccountID = Convert.ToInt32(row["accountID"]),
+                    AccountName = row["accountName"].ToString(),
+                    AccountType = row["accountType"].ToString(),
+                    AccountPassword = row["accountPassword"].ToString()
+                };
+            }
+
+            objCommand.Parameters.Clear(); // Clear parameters to reuse the command object
+            return account;
+        }
+
     }
 }

@@ -49,6 +49,7 @@ namespace Project4.Controllers
 
         public IActionResult ViewHome(int id)
         {
+            ViewData["Title"] = "Viewing Home - ID:" + id;
             Home home = hda.GetHomeByID(id); 
 
             if (home == null)
@@ -62,6 +63,7 @@ namespace Project4.Controllers
 
         public IActionResult Edit(int id)
         {
+            ViewData["Title"] = "Editing Home - ID:" + id;
             Home home = hda.GetHomeByID(id); 
 
             if (home==null)
@@ -87,7 +89,9 @@ namespace Project4.Controllers
 
                 //images
 
-                return RedirectToAction("Index");
+                ViewData["Message"] = "Home has been updated.";
+
+                return RedirectToAction("Index", "Home");
             }
             return View(home);
         }

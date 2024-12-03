@@ -23,8 +23,6 @@ namespace Project4.Models
         private List<Utility> utilities;
         private List<HomeImage> homeImages;
 
-
-
         public Home()
         {
         }

@@ -6,6 +6,7 @@ namespace RealEstate.Controllers
     public class AccountController : Controller
     {
         AccountDataAccess ada = new AccountDataAccess();
+        Account account;
         int count;
 
         public IActionResult Logout()
@@ -28,7 +29,10 @@ namespace RealEstate.Controllers
             //check for login cookies
             if (Request.Cookies.ContainsKey("Name") && Request.Cookies.ContainsKey("Password"))
             {
-                HttpContext.Session.SetString("Account", Request.Cookies["Name"].ToString());
+                
+                //set account role in session
+                HttpContext.Session.SetString("AccountRole", Request.Cookies["Name"]);
+
                 return RedirectToAction("Index", "Home");
             }
             return View(new LoginViewModel());
@@ -46,7 +50,9 @@ namespace RealEstate.Controllers
 
                 if (count > 0)
                 {
-                    // Account found
+                    // Account found, get role for session
+                    //account = ada.GetAccountByAccountName(model.AccountName);
+
                     HttpContext.Session.SetString("AccountName", model.AccountName);
                     
                     //check for cookies
@@ -62,7 +68,7 @@ namespace RealEstate.Controllers
                         Response.Cookies.Append("Name", model.AccountName, options);
                         Response.Cookies.Append("Password", model.AccountPassword, options);
                     }
-
+                    ViewData["Message"] = "Welcome! " + model.AccountName;
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -148,8 +154,8 @@ namespace RealEstate.Controllers
                     //account registered
                     ViewData["Message"] = "Registration successful! Welcome, " + account.AccountName;
 
-                    //add account to session
-                    HttpContext.Session.SetInt32("AccountID", account.AccountID);
+                    //add account role to session
+                    HttpContext.Session.SetString("AccountRole", account.AccountType);
 
                     //redirect registered user to homepage
                     return RedirectToAction("Index", "Home");
@@ -157,11 +163,17 @@ namespace RealEstate.Controllers
                 else
                 {
                     //account not added
-                    ViewData["Message"] = "Something went wrong when entering your credentials";
+                    //ViewData["Message"] = "Something went wrong when entering your credentials";
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                    ViewData["Message"] = string.Join("<br>", errors);
                 }
-
             }
+            return View();
+        }
 
+        public IActionResult ForgotPassword()
+        {
+            
             return View();
         }
     }
