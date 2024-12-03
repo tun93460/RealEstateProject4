@@ -55,7 +55,7 @@
 		<div class="mt-4">
 			<h3>Amenities</h3>
 			<div class="list-group">
-				@* @foreach (var amenity in Model.Amenities)
+				@foreach (Amenity amenity in Model.Amenities)
 				{
 					 <div class="list-group-item">
 						<div class="d-flex justify-content-between align-items-center">
@@ -71,19 +71,56 @@
 							<p class="mb-0 text-muted">@amenity.AmenitiesDescription</p>
 						</div>
 					</div> 
-				} *@
+				}
 			</div>
 
 		</div>
 
 		<div class="mt-4">
 			<h3>Utilities</h3>
-
+			<div class="list-group">
+				@foreach (Utility utility in Model.Utilities)
+				{
+					<div class="list-group-item">
+						<div class="d-flex justify-content-between align-items-center">
+							<span>
+								<i class="bi bi-check-circle text-success me-2"></i>
+								<strong>@utility.UtilityType</strong>
+							</span>
+							<button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#utility-@utility.UtilityType.Replace(" ", "-")">
+								Details
+							</button>
+						</div>
+						<div class="collapse mt-2" id="utility-@utility.UtilityType.Replace(" ", "-")">
+							<p class="mb-0 text-muted">@utility.UtilityDescription</p>
+						</div>
+					</div>
+				}
+			</div>
 		</div>
 
 		<div class="mt-4">
 			<h3>Rooms</h3>
-
+			<div class="list-group">
+				@foreach (Room room in Model.Rooms)
+				{
+					<div class="list-group-item">
+						<div class="d-flex justify-content-between align-items-center">
+							<span>
+								<i class="bi bi-check-circle text-success me-2"></i>
+								<strong>@room.RoomType</strong>
+							</span>
+							<button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#room-@room.RoomType.Replace(" ", "-")">
+								Details
+							</button>
+						</div>
+						<div class="collapse mt-2" id="room-@room.RoomType.Replace(" ", "-")">
+							<p class="mb-0 text-muted">@room.RoomDescription</p>
+							<p class="mb-0 text-muted">Dimensions: @room.RoomLength X @room.RoomWidth</p>
+						</div>
+					</div>
+				}
+			</div>
 		</div>
 	</div>
 

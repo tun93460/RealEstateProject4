@@ -3,7 +3,7 @@
     public class AccountRegistrationViewModel
     {
         private Account account;
-        private List<AccountSecurityQuestion> securityQuestions;
+        private List<AccountSecurityQuestion>? securityQuestions;
 
         public AccountRegistrationViewModel(Account account, List<AccountSecurityQuestion> securityQuestions)
         {
@@ -22,7 +22,7 @@
             set { account = value; }
         }
 
-        public List<AccountSecurityQuestion> SecurityQuestions
+        public List<AccountSecurityQuestion>? SecurityQuestions
         {
             get { return securityQuestions; }
             set { securityQuestions = value; }

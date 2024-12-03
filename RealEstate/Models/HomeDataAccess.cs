@@ -28,6 +28,7 @@ namespace Project4.Models
 
             home = new Home();
 
+            objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "GetHomeByID";
 
@@ -69,24 +70,24 @@ namespace Project4.Models
                 };
 
                 //add amenities
-                //home.Amenities
-                amenities = GetAmenitiesByHomeID(homeID);
+                home.Amenities = GetAmenitiesByHomeID(homeID);
+
 
                 //add utilities
-                //home.Utilities = GetUtilitiesByHomeID(homeID);
+                home.Utilities = GetUtilitiesByHomeID(homeID);
 
                 //add rooms
-                //home.Rooms = GetRoomsByHomeID(homeID);
+                home.Rooms = GetRoomsByHomeID(homeID);
 
                 //add Images
                 //home.HomeImages = GetImagesByHomeID(homeID);
 
 
                 //calculate home size based on room dimensions
-                //foreach (Room room in home.Rooms)
-                //{
-                //    home.Size += room.RoomLength * room.RoomWidth;
-                //}
+                foreach (Room room in home.Rooms)
+                {
+                    home.Size += room.RoomLength * room.RoomWidth;
+                }
             }
             objCommand.Parameters.Clear();
 
@@ -117,6 +118,7 @@ namespace Project4.Models
         {
             SqlCommand cmdSearchHomes = new SqlCommand("SearchHomes");
             cmdSearchHomes.CommandType = CommandType.StoredProcedure;
+            cmdSearchHomes.Parameters.Clear();
 
             if (!string.IsNullOrEmpty(location))
                 cmdSearchHomes.Parameters.AddWithValue("@Location", location);
@@ -164,13 +166,16 @@ namespace Project4.Models
                 }
             }
 
+            cmdSearchHomes.Parameters.Clear();
             return homes;
         }
 
         public List<Amenity> GetAmenitiesByHomeID(int homeID)
         {
+            
             SqlCommand cmdGetAmenities = new SqlCommand("GetAmenitiesByHomeID");
             cmdGetAmenities.CommandType = CommandType.StoredProcedure;
+            cmdGetAmenities.Parameters.Clear();
             cmdGetAmenities.Parameters.AddWithValue("@HomeID", homeID);
             
             ds = dbConnect.GetDataSetUsingCmdObj(cmdGetAmenities);
@@ -188,11 +193,13 @@ namespace Project4.Models
                     amenities.Add(amenity);    
                 }
             }
+            cmdGetAmenities.Parameters.Clear();
             return amenities;
         }
 
         public List<Utility> GetUtilitiesByHomeID(int homeID)
         {
+            objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "GetUtilitiesByHomeID";
             objCommand.Parameters.AddWithValue("@HomeID", homeID);
@@ -218,6 +225,7 @@ namespace Project4.Models
 
         public List<Room> GetRoomsByHomeID(int homeID)
         {
+            objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "GetRoomsByHomeID";
             objCommand.Parameters.AddWithValue("@HomeID", homeID);
@@ -246,6 +254,7 @@ namespace Project4.Models
 
         public List<HomeImage> GetImagesByHomeID(int homeID)
         {
+            objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "GetImagesByHomeID";
             objCommand.Parameters.AddWithValue("@HomeID", homeID);
@@ -269,5 +278,6 @@ namespace Project4.Models
             }
             return images;
         }
+
     }
 }

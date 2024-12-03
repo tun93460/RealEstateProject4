@@ -95,19 +95,24 @@ namespace RealEstate.Controllers
         {
             ViewData["Title"] = "Register";
 
-            List<AccountSecurityQuestion> questionList = new List<AccountSecurityQuestion>();
-            //get security questions from db, populate questionList ^
-            //populate security question ddl
-            //here are some test questions
-            SecurityQuestion ques1 = new SecurityQuestion(1, "Pet Name", "Please enter the name of your first pet: ");
-            SecurityQuestion ques2 = new SecurityQuestion(2, "Street Name", "What is the name of the street you grew up on? ");
+            //List<AccountSecurityQuestion> questionList = new List<AccountSecurityQuestion>();
+            ////get security questions from db, populate questionList ^
+            ////populate security question ddl
+            ////here are some test questions
+            //SecurityQuestion ques1 = new SecurityQuestion(1, "Pet Name", "Please enter the name of your first pet: ");
+            //SecurityQuestion ques2 = new SecurityQuestion(2, "Street Name", "What is the name of the street you grew up on? ");
 
-            questionList.Add(new AccountSecurityQuestion("Bella", model.Account, ques1));
-            questionList.Add(new AccountSecurityQuestion("Kingswood", model.Account, ques2));
+            //questionList.Add(new AccountSecurityQuestion("Bella", model.Account, ques1));
+            //questionList.Add(new AccountSecurityQuestion("Kingswood", model.Account, ques2));
 
 
 
-            ViewData["SecurityQuestions"] = questionList;
+            //ViewData["SecurityQuestions"] = questionList;
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                ViewData["Message"] = string.Join("<br>", errors);
+            }
 
             if (ModelState.IsValid)
             {
@@ -125,13 +130,13 @@ namespace RealEstate.Controllers
                 workAddress.AddressID = ada.RegisterAddress(workAddress.City, workAddress.State, workAddress.Street, workAddress.Zip);
 
                 //insert personalInfo
-                personalInfo.PersonalInfoID = ada.RegisterPersonalInfo(persAddress.AddressID, personalInfo.PersonalPhone, personalInfo.PersonalEmail);
+                personalInfo.PersonalInfoID = ada.RegisterPersonalInfo((int)persAddress.AddressID, personalInfo.PersonalPhone, personalInfo.PersonalEmail);
 
                 //insert workInfo
-                workInfo.WorkInfoID = ada.RegisterWorkInfo(workAddress.AddressID, workInfo.CompanyName, workInfo.WorkPhone, workInfo.WorkEmail);
+                workInfo.WorkInfoID = ada.RegisterWorkInfo((int)workAddress.AddressID, workInfo.CompanyName, workInfo.WorkPhone, workInfo.WorkEmail);
 
                 //insert account
-                account.AccountID = ada.RegisterAccount(account.AccountName, account.AccountPassword, account.PersonalInfo.PersonalInfoID, account.WorkInfo.WorkInfoID, account.AccountType, account.RememberMe);
+                account.AccountID = ada.RegisterAccount(account.AccountName, account.AccountPassword, (int)account.PersonalInfo.PersonalInfoID, (int)account.WorkInfo.WorkInfoID, account.AccountType, account.RememberMe);
 
                 //check if acconut was entered successfully
                 if (account.AccountID > 0)
