@@ -19,15 +19,6 @@ namespace RealEstate.Controllers
         {
             ViewData["Title"] = "Login";
 
-            if (!ModelState.IsValid)
-            {
-                // Log or inspect the errors in the ModelState
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine(error.ErrorMessage);
-                }
-            }
-
             if (ModelState.IsValid)
             {
                 //call stored procedure to check if account exists
@@ -75,6 +66,8 @@ namespace RealEstate.Controllers
 
         public IActionResult Register(AccountRegistrationViewModel model)
         {
+            ViewData["Title"] = "Register";
+
             List<AccountSecurityQuestion> questionList = new List<AccountSecurityQuestion>();
             //get security questions from db, populate questionList ^
             //populate security question ddl
@@ -91,8 +84,27 @@ namespace RealEstate.Controllers
 
             if (ModelState.IsValid)
             {
-                //register account - ada.RegisterAccount(account)
-                //don't forget to insert security quetions
+                //register account
+                Address persAddress = model.Account.PersonalInfo.Address;
+                Address workAddress = model.Account.WorkInfo.Address;
+                PersonalInfo personalInfo = model.Account.PersonalInfo;
+                WorkInfo workInfo = model.Account.WorkInfo;
+                Account account = model.Account;
+
+                //insert personal address
+                persAddress.AddressID = ada.RegisterAddress(persAddress.City, persAddress.State, persAddress.Street, persAddress.Zip);
+
+                //insert work address
+                workAddress.AddressID = ada.RegisterAddress(workAddress.City, workAddress.State, workAddress.Street, workAddress.Zip);
+
+                //insert personalInfo
+                personalInfo.PersonalInfoID = ada.RegisterPersonalInfo(persAddress.AddressID, personalInfo.PersonalPhone, personalInfo.PersonalEmail);
+
+                //insert workInfo
+                workInfo.WorkInfoID = ada.RegisterWorkInfo(workAddress.AddressID, workInfo.CompanyName, workInfo.WorkPhone, workInfo.WorkEmail);
+
+                //insert account
+                account.AccountID = ada.RegisterAccount(account.AccountName, account.AccountPassword, account.PersonalInfo.PersonalInfoID, account.WorkInfo.WorkInfoID, account.AccountType, account.RememberMe);
 
                 //check for cookies enabled
                 if (model.Account.RememberMe)
@@ -101,13 +113,13 @@ namespace RealEstate.Controllers
                 }
 
                 //count = db result
-                if (count > 0)
+                if (account.AccountID > 0)
                 {
                     //account registered
-                    ViewData["Message"] = "Registration successful! Welcome, " + model.Account.AccountName;
+                    ViewData["Message"] = "Registration successful! Welcome, " + account.AccountName;
 
                     //add acconut to session
-                    HttpContext.Session.SetInt32("Account", model.Account.AccountID);
+                    HttpContext.Session.SetInt32("Account", account.AccountID);
 
                     //redirect registered user to homepage
                     return RedirectToAction("Index", "Home");

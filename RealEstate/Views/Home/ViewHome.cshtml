@@ -12,16 +12,15 @@
 		<div class="col-md-6">
 			<div id="homeCarousel" class="carousel slide" data-bs-ride="carousel">
 				<div class="carousel-inner">
-					@for (int i = 0; i < Model.HomeImages.Count; i++)
+					@* @for (int i = 0; i < Model.HomeImages.Count; i++)
 					{
 						<div class="carousel-item @(i == 0 ? "active" : "")">
-							<!-- image data -->
 							<img src="@Model.HomeImages[i].ImageData" class="d-block w-100" alt="@Model.HomeImages[i].ImageName" />
 							<div class="carousel-caption d-none d-md-block">
 								<p>@Model.HomeImages[i].ImageCaption</p>
 							</div>
 						</div>
-					}
+					} *@
 
 				</div>
 				<button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
@@ -56,9 +55,9 @@
 		<div class="mt-4">
 			<h3>Amenities</h3>
 			<div class="list-group">
-				@foreach (var amenity in Model.Amenities)
+				@* @foreach (var amenity in Model.Amenities)
 				{
-					<div class="list-group-item">
+					 <div class="list-group-item">
 						<div class="d-flex justify-content-between align-items-center">
 							<span>
 								<i class="bi bi-check-circle text-success me-2"></i>
@@ -71,8 +70,8 @@
 						<div class="collapse mt-2" id="amenity-@amenity.AmenitiesName.Replace(" ", "-")">
 							<p class="mb-0 text-muted">@amenity.AmenitiesDescription</p>
 						</div>
-					</div>
-				}
+					</div> 
+				} *@
 			</div>
 
 		</div>

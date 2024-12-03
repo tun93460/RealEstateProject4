@@ -69,7 +69,8 @@ namespace Project4.Models
                 };
 
                 //add amenities
-                home.Amenities = GetAmenitiesByHomeID(homeID);
+                //home.Amenities
+                amenities = GetAmenitiesByHomeID(homeID);
 
                 //add utilities
                 //home.Utilities = GetUtilitiesByHomeID(homeID);
