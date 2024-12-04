@@ -49,17 +49,18 @@ namespace Project4.Models
             objCommand.Parameters.AddWithValue("@UserPassword", accountPassword);
             objCommand.Parameters.AddWithValue("@PersonalInfoID", personalInfoID);
             objCommand.Parameters.AddWithValue("@WorkInfoID", workInfoID);
+            objCommand.Parameters.AddWithValue("@AccountType", accountType);
+            objCommand.Parameters.AddWithValue("@RememberMe", rememberMe);
 
-            SqlParameter outputAccountID = new SqlParameter("@NewAgentID", DBNull.Value)
+            SqlParameter outputAccountID = new SqlParameter("@NewAccountID", SqlDbType.Int)
             {
-                Direction = ParameterDirection.Output,
-                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output
             };
             objCommand.Parameters.Add(outputAccountID);
 
             dbObj.DoUpdateUsingCmdObj(objCommand);
 
-            outputID = (int)outputAccountID.Value;
+            int outputID = (outputAccountID.Value != DBNull.Value) ? (int)outputAccountID.Value : 0;
 
             objCommand.Parameters.Clear();
             return outputID;
@@ -75,22 +76,19 @@ namespace Project4.Models
             objCommand.Parameters.AddWithValue("@Street", street);
             objCommand.Parameters.AddWithValue("@Zip", zip);
 
-            SqlParameter outputAddressID = new SqlParameter("@NewAddressID", DBNull.Value)
+            SqlParameter outputAddressID = new SqlParameter("@NewAddressID", SqlDbType.Int)
             {
-                Direction = ParameterDirection.Output,
-                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output
             };
             objCommand.Parameters.Add(outputAddressID);
 
             dbObj.DoUpdateUsingCmdObj(objCommand);
 
-            outputID = (int)outputAddressID.Value;
+            int outputID = (outputAddressID.Value != DBNull.Value) ? (int)outputAddressID.Value : 0;
 
             objCommand.Parameters.Clear();
             return outputID;
         }
-
-
 
         public int RegisterPersonalInfo(int addressID, string personalPhone, string personalEmail)
         {
@@ -101,16 +99,15 @@ namespace Project4.Models
             objCommand.Parameters.AddWithValue("@PersonalPhone", personalPhone);
             objCommand.Parameters.AddWithValue("@PersonalEmail", personalEmail);
 
-            SqlParameter outputPersonalInfoID = new SqlParameter("@NewPersonalInfoID", DBNull.Value)
+            SqlParameter outputPersonalInfoID = new SqlParameter("@NewPersonalInfoID", SqlDbType.Int)
             {
-                Direction = ParameterDirection.Output,
-                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output
             };
             objCommand.Parameters.Add(outputPersonalInfoID);
 
             dbObj.DoUpdateUsingCmdObj(objCommand);
 
-            outputID = (int)outputPersonalInfoID.Value;
+            int outputID = (outputPersonalInfoID.Value != DBNull.Value) ? (int)outputPersonalInfoID.Value : 0;
 
             objCommand.Parameters.Clear();
             return outputID;
@@ -118,28 +115,25 @@ namespace Project4.Models
 
         public int RegisterWorkInfo(int addressID, string companyName, string workPhone, string workEmail)
         {
-            objCommand.CommandType = CommandType.StoredProcedure;
-            objCommand.CommandText = "InsertWorkInfo";
+            SqlConnection connection = dbObj.GetConnection();
+            connection.Open();
 
-            objCommand.Parameters.AddWithValue("@AddressID", addressID);
-            objCommand.Parameters.AddWithValue("@CompanyName", companyName);
-            objCommand.Parameters.AddWithValue("@WorkPhone", workPhone);
-            objCommand.Parameters.AddWithValue("@WorkEmail", workEmail);
+            SqlCommand cmd = new SqlCommand("InsertWorkInfo", connection);
+            cmd.CommandType = CommandType.StoredProcedure;
 
-            SqlParameter outputWorkInfoID = new SqlParameter("@NewWorkInfoID", DBNull.Value)
-            {
-                Direction = ParameterDirection.Output,
-                SqlDbType = SqlDbType.Int,
-            };
-            objCommand.Parameters.Add(outputWorkInfoID);
+            cmd.Parameters.AddWithValue("@AddressID", addressID);
+            cmd.Parameters.AddWithValue("@CompanyName", companyName);
+            cmd.Parameters.AddWithValue("@WorkPhone", workPhone);
+            cmd.Parameters.AddWithValue("@WorkEmail", workEmail);
 
-            dbObj.DoUpdateUsingCmdObj(objCommand);
+            int newWorkInfoID = Convert.ToInt32(cmd.ExecuteScalar());
 
-            outputID = (int)outputWorkInfoID.Value;
-
-            objCommand.Parameters.Clear();
-            return outputID;
+            connection.Close();
+            return newWorkInfoID;
         }
+
+
+
 
         public Account GetAccountByAccountName(string accountName)
         {
