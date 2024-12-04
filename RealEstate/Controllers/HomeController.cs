@@ -28,15 +28,37 @@ namespace Project4.Controllers
             return View();
         }
 
+        public IActionResult Create()
+        {
+            var home = new Home
+            {
+                Address = new Address(),
+                Rooms = new List<Room>(),
+                HomeImages = new List<HomeImage>()
+            };
+            return View(home);
+        }
+
+
+        public IActionResult Offer()
+        {
+            return View("Offer");
+        }
+
+        public IActionResult Showing()
+        {
+            return View("Showing");
+        }
+
 
         [HttpPost]
         public IActionResult SearchHomes(string location, string propertyType, int minBedrooms, int minBathrooms, double minPrice, double maxPrice, double minHomeSize)
         {
-                List<Home> homes = hda.SearchHomes(location, propertyType, minBedrooms, minBathrooms, minPrice, maxPrice, minHomeSize);
-                
+            List<Home> homes = hda.SearchHomes(location, propertyType, minBedrooms, minBathrooms, minPrice, maxPrice, minHomeSize);
 
-                return View("Index", homes);
-            }
+
+            return View("Index", homes);
+        }
 
 
 
@@ -50,7 +72,7 @@ namespace Project4.Controllers
         public IActionResult ViewHome(int id)
         {
             ViewData["Title"] = "Viewing Home - ID:" + id;
-            Home home = hda.GetHomeByID(id); 
+            Home home = hda.GetHomeByID(id);
 
             if (home == null)
             {
@@ -64,9 +86,9 @@ namespace Project4.Controllers
         public IActionResult Edit(int id)
         {
             ViewData["Title"] = "Editing Home - ID:" + id;
-            Home home = hda.GetHomeByID(id); 
+            Home home = hda.GetHomeByID(id);
 
-            if (home==null)
+            if (home == null)
             {
                 return NotFound();
             }
@@ -94,6 +116,55 @@ namespace Project4.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return View(home);
+        }
+
+        [HttpPost]
+        public IActionResult AddRoom(Home home, string roomType, string roomDescription, int roomLength, int roomWidth)
+        {
+            if (home.Rooms == null)
+            {
+                home.Rooms = new List<Room>();
+            }
+
+            home.Rooms.Add(new Room
+            {
+                RoomType = roomType,
+                RoomDescription = roomDescription,
+                RoomLength = roomLength,
+                RoomWidth = roomWidth
+            });
+            return View("Create", home);
+        }
+
+
+        [HttpPost]
+        public IActionResult AddImage(Home home, string imageCaption)
+        {
+            if (home.HomeImages == null)
+            {
+                home.HomeImages = new List<HomeImage>();
+            }
+
+            if (home.ImageFile != null)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    home.ImageFile.CopyTo(stream);
+                    home.HomeImages.Add(new HomeImage
+                    {
+                        ImageCaption = imageCaption,
+                        ImageData = stream.ToArray()
+                    });
+                }
+            }
+            return View("Create", home);
+        }
+
+
+        [HttpPost]
+        public IActionResult SaveHome(Home home)
+        {
+            return RedirectToAction("Create");
         }
     }
 }

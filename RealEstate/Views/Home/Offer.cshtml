@@ -1,0 +1,99 @@
+﻿@model Project4.Models.Offer
+
+
+
+<h1>Make an Offer to Buy a Home</h1>
+
+<form asp-action="SaveOffer" method="post">
+
+    <h3>Contact Information</h3>
+
+
+
+    <div class="form-group">
+
+        <label asp-for="ContactInfo.Name"></label>
+
+        <input asp-for="ContactInfo.Name" class="form-control" placeholder="Enter Your Name" />
+
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="ContactInfo.Email"></label>
+
+        <input asp-for="ContactInfo.Email" class="form-control" placeholder="Enter Your Email" />
+
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="ContactInfo.WorkEmail"></label>
+
+        <input asp-for="ContactInfo.WorkEmail" class="form-control" placeholder="Enter Work Email" />
+
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="ContactInfo.Phone"></label>
+
+        <input asp-for="ContactInfo.Phone" class="form-control" placeholder="Enter Phone Number" />
+
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="Amount"></label>
+
+        <input asp-for="Amount" type="number" class="form-control" placeholder="Enter Offer Amount" />
+
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="SaleType"></label>
+
+        <select asp-for="SaleType" class="form-control">
+
+            <option value="">Select Sale Type</option>
+
+            <option value="ConventionalMortgage">Conventional Mortgage</option>
+
+            <option value="Cash">Cash</option>
+
+            <option value="AsIs">As-Is (No Contingencies)</option>
+
+        </select>
+
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="Contingencies"></label>
+
+        <input asp-for="Contingencies" class="form-control" placeholder="List any contingencies" />
+
+        <button type="button" class="btn btn-secondary">Add Contingency</button>
+
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="NeedsToSell"></label>
+
+        <input asp-for="NeedsToSell" type="checkbox" /> Need to Sell Home Before Buying?
+
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="MoveInDate"></label>
+
+        <input asp-for="MoveInDate" type="date" class="form-control" />
+
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Offer</button>
+
+</form> 

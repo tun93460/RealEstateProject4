@@ -1,0 +1,107 @@
+﻿@model Project4.Models.Home 
+
+<h1>Create Home</h1> 
+<form asp-action="SaveHome" method="post"> 
+    <div class="form-group"> 
+        <label asp-for="Address.Street"></label> 
+        <input asp-for="Address.Street" class="form-control" placeholder="Street" /> 
+    </div> 
+    <div class="form-group"> 
+        <label asp-for="Address.City"></label> 
+        <input asp-for="Address.City" class="form-control" placeholder="City" /> 
+    </div> 
+    <div class="form-group"> 
+        <label asp-for="Address.State"></label> 
+        <input asp-for="Address.State" class="form-control" placeholder="State" /> 
+    </div> 
+    <div class="form-group"> 
+        <label asp-for="Address.Zip"></label> 
+        <input asp-for="Address.Zip" class="form-control" placeholder="Zip Code" /> 
+    </div> 
+
+    <div class="form-group"> 
+        <label asp-for="PropertyType"></label> 
+        <select asp-for="PropertyType" class="form-control"> 
+            <option value="">Select Property Type</option> 
+            <option value="Condo">Condo</option> 
+            <option value="Townhouse">Townhouse</option> 
+            <option value="Single Family">Single Family</option> 
+            <option value="Multi Family">Multi Family</option> 
+        </select> 
+    </div> 
+    <div class="form-group"> 
+        <label asp-for="Price"></label> 
+        <input asp-for="Price" type="number" class="form-control" placeholder="Price" /> 
+    </div> 
+    <form asp-action="random" method="post"> 
+        </form> 
+
+ 
+    @if (Model.Rooms != null) 
+    { 
+        <ul> 
+            @foreach (var room in Model.Rooms) 
+            { 
+                <li> 
+                    @room.RoomType 
+                    @room.RoomDescription 
+                    (@room.RoomLength ft x @room.RoomWidth ft) 
+                    <form asp-action="DeleteRoom" method="post"> 
+                        <input type="hidden" name="roomId" value="@room.RoomID" /> 
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button> 
+                    </form> 
+                </li> 
+            } 
+        </ul> 
+    } 
+
+    <form asp-action="AddRoom" method="post"> 
+        <div class="form-group"> 
+            <label>Room Type</label> 
+            <input name="roomType" class="form-control" placeholder="Room Type" /> 
+        </div> 
+        <div class="form-group"> 
+            <label>Room Description</label> 
+            <textarea name="roomDescription" class="form-control" placeholder="Room Description"></textarea> 
+        </div> 
+        <div class="form-group"> 
+            <label>Room Length</label> 
+            <input name="roomLength" type="number" class="form-control" placeholder="Room Length (ft)" /> 
+        </div> 
+        <div class="form-group"> 
+            <label>Room Width</label> 
+            <input name="roomWidth" type="number" class="form-control" placeholder="Room Width (ft)" /> 
+        </div> 
+        <button type="submit" class="btn btn-secondary">Add Room</button> 
+    </form> 
+
+    @if (Model.HomeImages != null) 
+    { 
+        <ul> 
+            @foreach (var image in Model.HomeImages) 
+            { 
+                <li> 
+                    @image.ImageCaption 
+                    <form asp-action="DeleteImage" method="post"> 
+                        <input type="hidden" name="imageId" value="@image.ImageID" /> 
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button> 
+                    </form> 
+                </li> 
+            } 
+        </ul> 
+    } 
+
+    <form asp-action="AddImage" method="post"> 
+        <div class="form-group"> 
+            <label asp-for="ImageFile">Upload Image</label> 
+            <input asp-for="ImageFile" type="file" class="form-control" /> 
+        </div> 
+        <div class="form-group"> 
+            <label>Image Caption</label> 
+            <input name="imageCaption" class="form-control" placeholder="Image Caption" /> 
+        </div> 
+        <button type="submit" class="btn btn-secondary">Add Image</button> 
+    </form> 
+
+    <button type="submit" class="btn btn-primary">Save Home</button> 
+</form> 

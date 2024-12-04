@@ -1,0 +1,30 @@
+﻿@model Project4.Models.Showing
+
+<h1>Schedule a Showing</h1>
+<form asp-action="SaveShowing" method="post">
+    <div class="form-group">
+        <label asp-for="ContactInfo.Name"></label>
+        <input asp-for="ContactInfo.Name" class="form-control" placeholder="Enter Your Name" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ContactInfo.Email"></label>
+        <input asp-for="ContactInfo.Email" class="form-control" placeholder="Enter Your Email" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ContactInfo.WorkEmail"></label>
+        <input asp-for="ContactInfo.WorkEmail" class="form-control" placeholder="Enter Your Email" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ContactInfo.Phone"></label>
+        <input asp-for="ContactInfo.Phone" class="form-control" placeholder="Enter Your Phone Number" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ShowingDate"></label>
+        <input asp-for="ShowingDate" type="date" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="PreferredTime"></label>
+        <input asp-for="PreferredTime" type="time" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Showing Request</button>
+</form> 
