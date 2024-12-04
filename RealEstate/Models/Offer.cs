@@ -1,4 +1,5 @@
-﻿namespace Project4.Models
+﻿using System.ComponentModel.DataAnnotations;
+namespace Project4.Models
 
 {
 
@@ -6,9 +7,9 @@
 
     {
 
-        private int offerID;
+        private int? offerID;
 
-        private Contact contactInfo;
+        private Contact? contactInfo;
 
         private string amount;
 
@@ -20,13 +21,12 @@
 
         private string offerStatus;
 
-        private List<Contingency> contingencies;
+        private List<Contingency>? contingencies;
 
-        private int homeID;
+        private Home? home;
 
-        private int brokerID;
+        private Account? broker;
 
-        private int offerContactID;
 
 
 
@@ -38,9 +38,9 @@
 
 
 
-        public Offer(int offerID, Contact contactInfo, string amount, string saleType, string needsToSell,
+        public Offer(int? offerID, Contact? contactInfo, string amount, string saleType, string needsToSell,
 
-            string moveInDate, string offerStatus, List<Contingency> contingencies, int homeID, int brokerID, int offerContactID)
+            string moveInDate, string offerStatus, List<Contingency>? contingencies, Home? home, Account? broker)
 
         {
 
@@ -60,17 +60,15 @@
 
             this.contingencies = contingencies;
 
-            this.homeID = homeID;
+            this.home = home;
 
-            this.brokerID = brokerID;
-
-            this.offerContactID = offerContactID;
+            this.broker = broker;
 
         }
 
 
 
-        public int OfferID
+        public int? OfferID
 
         {
 
@@ -82,7 +80,7 @@
 
 
 
-        public Contact ContactInfo
+        public Contact? ContactInfo
 
         {
 
@@ -93,7 +91,7 @@
         }
 
 
-
+        [Required(ErrorMessage = "Amount is required")]
         public string Amount
 
         {
@@ -105,7 +103,7 @@
         }
 
 
-
+        [Required(ErrorMessage = "Sale type is required")]
         public string SaleType
 
         {
@@ -117,7 +115,7 @@
         }
 
 
-
+        [Required(ErrorMessage = "Field is required")]
         public string NeedsToSell
 
         {
@@ -129,7 +127,7 @@
         }
 
 
-
+        [Required(ErrorMessage = "Move in date required")]
         public string MoveInDate
 
         {
@@ -141,8 +139,7 @@
         }
 
 
-
-        public string OfferStatus
+        public string? OfferStatus
 
         {
 
@@ -154,7 +151,7 @@
 
 
 
-        public List<Contingency> Contingencies
+        public List<Contingency>? Contingencies
 
         {
 
@@ -164,37 +161,25 @@
 
         }
 
-        public int HomeID
+        public Home? Home
 
         {
 
-            get { return homeID; }
+            get { return home; }
 
-            set { homeID = value; }
+            set { home = value; }
 
         }
 
 
 
-        public int BrokerID
+        public Account? Broker
 
         {
 
-            get { return brokerID; }
+            get { return broker; }
 
-            set { brokerID = value; }
-
-        }
-
-
-
-        public int OfferContactID
-
-        {
-
-            get { return offerContactID; }
-
-            set { offerContactID = value; }
+            set { broker = value; }
 
         }
 

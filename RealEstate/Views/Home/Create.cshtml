@@ -5,18 +5,22 @@
     <div class="form-group"> 
         <label asp-for="Address.Street"></label> 
         <input asp-for="Address.Street" class="form-control" placeholder="Street" /> 
+        <span asp-validation-for="Address.Street" class="text-danger"></span>
     </div> 
     <div class="form-group"> 
         <label asp-for="Address.City"></label> 
         <input asp-for="Address.City" class="form-control" placeholder="City" /> 
+        <span asp-validation-for="Address.City" class="text-danger"></span>
     </div> 
     <div class="form-group"> 
         <label asp-for="Address.State"></label> 
         <input asp-for="Address.State" class="form-control" placeholder="State" /> 
+        <span asp-validation-for="Address.State" class="text-danger"></span>
     </div> 
     <div class="form-group"> 
         <label asp-for="Address.Zip"></label> 
         <input asp-for="Address.Zip" class="form-control" placeholder="Zip Code" /> 
+        <span asp-validation-for="Address.Zip" class="text-danger"></span>
     </div> 
 
     <div class="form-group"> 
@@ -28,13 +32,14 @@
             <option value="Single Family">Single Family</option> 
             <option value="Multi Family">Multi Family</option> 
         </select> 
+        <span asp-validation-for="PropertyType" class="text-danger"></span>
     </div> 
     <div class="form-group"> 
         <label asp-for="Price"></label> 
         <input asp-for="Price" type="number" class="form-control" placeholder="Price" /> 
+        <span asp-validation-for="Price" class="text-danger"></span>
     </div> 
-    <form asp-action="random" method="post"> 
-        </form> 
+
 
  
     @if (Model.Rooms != null) 

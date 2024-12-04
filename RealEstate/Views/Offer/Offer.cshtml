@@ -4,7 +4,7 @@
 
 <h1>Make an Offer to Buy a Home</h1>
 
-<form asp-action="SaveOffer" method="post">
+<form asp-action="SaveOffer" asp-controller="Offer" method="post">
 
     <h3>Contact Information</h3>
 
@@ -15,6 +15,7 @@
         <label asp-for="ContactInfo.Name"></label>
 
         <input asp-for="ContactInfo.Name" class="form-control" placeholder="Enter Your Name" />
+        <span asp-validation-for="ContactInfo.Name" class="text-danger"></span>
 
     </div>
 
@@ -23,6 +24,7 @@
         <label asp-for="ContactInfo.Email"></label>
 
         <input asp-for="ContactInfo.Email" class="form-control" placeholder="Enter Your Email" />
+        <span asp-validation-for="ContactInfo.Email" class="text-danger"></span>
 
     </div>
 
@@ -31,6 +33,7 @@
         <label asp-for="ContactInfo.WorkEmail"></label>
 
         <input asp-for="ContactInfo.WorkEmail" class="form-control" placeholder="Enter Work Email" />
+        <span asp-validation-for="ContactInfo.WorkEmail" class="text-danger"></span>
 
     </div>
 
@@ -39,6 +42,7 @@
         <label asp-for="ContactInfo.Phone"></label>
 
         <input asp-for="ContactInfo.Phone" class="form-control" placeholder="Enter Phone Number" />
+        <span asp-validation-for="ContactInfo.Phone" class="text-danger"></span>
 
     </div>
 
@@ -47,6 +51,7 @@
         <label asp-for="Amount"></label>
 
         <input asp-for="Amount" type="number" class="form-control" placeholder="Enter Offer Amount" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
 
     </div>
 
@@ -65,16 +70,40 @@
             <option value="AsIs">As-Is (No Contingencies)</option>
 
         </select>
+        <span asp-validation-for="SaleType" class="text-danger"></span>
 
     </div>
+
+
 
     <div class="form-group">
 
         <label asp-for="Contingencies"></label>
 
-        <input asp-for="Contingencies" class="form-control" placeholder="List any contingencies" />
+        @if (Model.Contingencies != null)
+        {
+            <ul>
+                @foreach (Contingency cont in Model.Contingencies)
+                {
+                    <li>
+                        <h3>@cont.ContingencyName</h3>
+                        <p>@cont.ContingencyDescription</p>
+                        <form asp-action="DeleteContingency" asp-controller="Home" method="post">
+                            <input type="hidden" name="contName" value="@cont.ContingencyName" />
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+        }
 
-        <button type="button" class="btn btn-secondary">Add Contingency</button>
+        <form asp-action="AddContingency" asp-controller="Offer" method="post">
+            
+            <input asp-for="Contingencies" class="form-control" placeholder="List any contingencies" />
+            <span asp-validation-for="Contingencies" class="text-danger"></span>
+
+            <button type="submit" class="btn btn-secondary">Add Contingency</button>
+        </form>
 
     </div>
 
@@ -83,6 +112,7 @@
         <label asp-for="NeedsToSell"></label>
 
         <input asp-for="NeedsToSell" type="checkbox" /> Need to Sell Home Before Buying?
+        <span asp-validation-for="NeedsToSell" class="text-danger"></span>
 
     </div>
 
@@ -91,6 +121,7 @@
         <label asp-for="MoveInDate"></label>
 
         <input asp-for="MoveInDate" type="date" class="form-control" />
+        <span asp-validation-for="MoveInDate" class="text-danger"></span>
 
     </div>
 

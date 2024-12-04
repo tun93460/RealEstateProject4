@@ -4,7 +4,7 @@ namespace Project4.Controllers
 {
     public class ShowingController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Showing()
         {
             return View();
         }

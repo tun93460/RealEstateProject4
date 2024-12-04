@@ -3,6 +3,7 @@ using Project4.Models;
 using System.Data;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace Project4.Controllers
 {
@@ -34,21 +35,18 @@ namespace Project4.Controllers
             {
                 Address = new Address(),
                 Rooms = new List<Room>(),
+                Amenities = new List<Amenity>(),
+                Utilities = new List<Utility>(),
                 HomeImages = new List<HomeImage>()
             };
+
+            TempData["Home"] = JsonConvert.SerializeObject(home);
+            TempData.Keep("Home");
+            
             return View(home);
         }
 
 
-        public IActionResult Offer()
-        {
-            return View("Offer");
-        }
-
-        public IActionResult Showing()
-        {
-            return View("Showing");
-        }
 
 
         [HttpPost]
@@ -93,12 +91,26 @@ namespace Project4.Controllers
                 return NotFound();
             }
 
+            TempData["Home"] = JsonConvert.SerializeObject(home);
+
             return View(home);
         }
 
         [HttpPost]
-        public IActionResult Edit(Home home)
+        public IActionResult Edit()
         {
+            string homeJson = TempData["Home"].ToString();
+            Home home;
+
+            if (!string.IsNullOrEmpty(homeJson))
+            {
+                home = new Home();
+            }
+            else
+            {
+                home = JsonConvert.DeserializeObject<Home>(homeJson);
+            }
+
             if (ModelState.IsValid)
             {
                 //updates
@@ -111,6 +123,9 @@ namespace Project4.Controllers
 
                 //images
 
+                //remove home data
+                TempData.Remove("Home");
+
                 ViewData["Message"] = "Home has been updated.";
 
                 return RedirectToAction("Index", "Home");
@@ -119,8 +134,19 @@ namespace Project4.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddRoom(Home home, string roomType, string roomDescription, int roomLength, int roomWidth)
+        public IActionResult AddRoom(string roomType, string roomDescription, int roomLength, int roomWidth)
         {
+            string homeJson = TempData["Home"].ToString();
+            Home home;
+
+            if (!string.IsNullOrEmpty(homeJson))
+            {
+                home = new Home { Rooms = new List<Room>() };
+            } else
+            {
+                home = JsonConvert.DeserializeObject<Home>(homeJson);
+            }
+
             if (home.Rooms == null)
             {
                 home.Rooms = new List<Room>();
@@ -133,23 +159,38 @@ namespace Project4.Controllers
                 RoomLength = roomLength,
                 RoomWidth = roomWidth
             });
+
+            TempData["Home"] = JsonConvert.SerializeObject(home);
+
             return View("Create", home);
         }
 
 
         [HttpPost]
-        public IActionResult AddImage(Home home, string imageCaption)
+        public IActionResult AddImage(string imageCaption, IFormFile imageFile)
         {
+            string homeJson = TempData["Home"].ToString();
+            Home home;
+
+            if (!string.IsNullOrEmpty(homeJson))
+            {
+                home = new Home { HomeImages = new List<HomeImage>() };
+            }
+            else
+            {
+                home = JsonConvert.DeserializeObject<Home>(homeJson);
+            }
+
             if (home.HomeImages == null)
             {
                 home.HomeImages = new List<HomeImage>();
             }
-
-            if (home.ImageFile != null)
+             
+            if (imageFile != null)
             {
-                using (var stream = new MemoryStream())
+                using (MemoryStream stream = new MemoryStream())
                 {
-                    home.ImageFile.CopyTo(stream);
+                    imageFile.CopyTo(stream);
                     home.HomeImages.Add(new HomeImage
                     {
                         ImageCaption = imageCaption,
@@ -157,14 +198,41 @@ namespace Project4.Controllers
                     });
                 }
             }
+
+            TempData["Home"] = JsonConvert.SerializeObject(home);
+
             return View("Create", home);
         }
 
 
         [HttpPost]
-        public IActionResult SaveHome(Home home)
+        public IActionResult SaveHome()
         {
-            return RedirectToAction("Create");
+            string homeJson = TempData["Home"].ToString();
+            Home home;
+
+            if (!string.IsNullOrEmpty(homeJson))
+            {
+                home = new Home();
+            }
+            else
+            {
+                home = JsonConvert.DeserializeObject<Home>(homeJson);
+            }
+
+            if (ModelState.IsValid)
+            {
+                //update database
+
+                //clear home data
+                TempData.Remove("Home");
+
+                //success message
+                //direct to index or my homes
+                ViewData["Message"] = "Home has been saved!";
+                return RedirectToAction("Index", "Home");
+            }
+            return RedirectToAction("Create", home);
         }
     }
 }

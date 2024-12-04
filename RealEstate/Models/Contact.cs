@@ -1,14 +1,16 @@
-﻿namespace Project4.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Project4.Models
 {
     public class Contact
     {
-        private int offerContactID;
+        private int? offerContactID;
         private string name;
         private string phone;
         private string email;
-        private string workEmail;
+        private string? workEmail;
 
-        public Contact(int offerContactID, string name, string phone, string email, string workEmail)
+        public Contact(int? offerContactID, string name, string phone, string email, string? workEmail)
         {
             this.offerContactID = offerContactID;
             this.name = name;
@@ -22,18 +24,20 @@
 
         }
 
-        public int OfferContactID
+        public int? OfferContactID
         {
             get { return offerContactID; }
             set { offerContactID = value; }
         }
 
+        [Required(ErrorMessage = "Name is required")]
         public String Name
         {
             get { return name; }
             set { name = value; }
         }
 
+        [Required(ErrorMessage = "Phone number is required")]
         public String Phone
         {
             get { return phone; }
@@ -41,14 +45,14 @@
         }
 
 
-
+        [Required(ErrorMessage = "Email is required")]
         public String Email
         {
             get { return email; }
             set { email = value; }
         }
 
-        public String WorkEmail
+        public String? WorkEmail
         {
             get { return workEmail; }
             set { workEmail = value; }
