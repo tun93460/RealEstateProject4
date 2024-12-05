@@ -2,35 +2,33 @@
 {
     public class Showing
     {
-        private int showingID;
-        private Contact contactInfo;
+        private int? showingID;
+        private Contact? contactInfo;
         private string showingDate;
         private string preferredTime;
-        private int showingContactID;
-        private int homeID;
+        private Home? home;
 
         public Showing()
         {
 
         }
 
-        public Showing(int showingID, Contact contactInfo, string showingDate, string preferredTime, int showingContactID, int homeID)
+        public Showing(int? showingID, Contact? contactInfo, string showingDate, string preferredTime, Home? home)
         {
             this.showingID = showingID;
             this.contactInfo = contactInfo;
             this.showingDate = showingDate;
             this.preferredTime = preferredTime;
-            this.showingContactID = showingContactID;
-            this.homeID = homeID;
+            this.home = home;
         }
 
-        public int ShowingID
+        public int? ShowingID
         {
             get { return showingID; }
             set { showingID = value; }
         }
 
-        public Contact ContactInfo
+        public Contact? ContactInfo
         {
             get { return contactInfo; }
             set { contactInfo = value; }
@@ -48,15 +46,10 @@
             set { preferredTime = value; }
         }
 
-        public int ShowingContactID
+        public Home Home
         {
-            get { return showingContactID; }
-            set { showingContactID = value; }
-        }
-        public int HomeID
-        {
-            get { return homeID; }
-            set { homeID = value; }
+            get { return home; }
+            set { home = value; }
         }
     }
 }
