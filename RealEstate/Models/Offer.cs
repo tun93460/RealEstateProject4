@@ -11,21 +11,19 @@ namespace Project4.Models
 
         private Contact? contactInfo;
 
-        private string amount;
+        private double amount;
 
         private string saleType;
 
         private string needsToSell;
 
-        private string moveInDate;
+        private DateTime moveInDate;
 
         private string offerStatus;
 
         private List<Contingency>? contingencies;
 
-        private Home? home;
-
-        private Account? broker;
+        private Listing? listing;
 
 
 
@@ -38,9 +36,9 @@ namespace Project4.Models
 
 
 
-        public Offer(int? offerID, Contact? contactInfo, string amount, string saleType, string needsToSell,
+        public Offer(int? offerID, Contact? contactInfo, double amount, string saleType, string needsToSell,
 
-            string moveInDate, string offerStatus, List<Contingency>? contingencies, Home? home, Account? broker)
+            DateTime moveInDate, string offerStatus, List<Contingency>? contingencies, Listing? listing)
 
         {
 
@@ -60,9 +58,7 @@ namespace Project4.Models
 
             this.contingencies = contingencies;
 
-            this.home = home;
-
-            this.broker = broker;
+            this.listing = listing;
 
         }
 
@@ -92,7 +88,7 @@ namespace Project4.Models
 
 
         [Required(ErrorMessage = "Amount is required")]
-        public string Amount
+        public double Amount
 
         {
 
@@ -128,7 +124,7 @@ namespace Project4.Models
 
 
         [Required(ErrorMessage = "Move in date required")]
-        public string MoveInDate
+        public DateTime MoveInDate
 
         {
 
@@ -161,26 +157,10 @@ namespace Project4.Models
 
         }
 
-        public Home? Home
-
+        public Listing? Listing
         {
-
-            get { return home; }
-
-            set { home = value; }
-
-        }
-
-
-
-        public Account? Broker
-
-        {
-
-            get { return broker; }
-
-            set { broker = value; }
-
+            get { return listing; }
+            set { listing = value; }
         }
 
     }
