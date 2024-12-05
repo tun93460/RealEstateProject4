@@ -4,6 +4,7 @@ using System.Data;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using Project4.Models.Utilities;
 
 namespace Project4.Controllers
 {
@@ -42,7 +43,7 @@ namespace Project4.Controllers
 
             TempData["Home"] = JsonConvert.SerializeObject(home);
             TempData.Keep("Home");
-            
+
             return View(home);
         }
 
@@ -142,7 +143,8 @@ namespace Project4.Controllers
             if (!string.IsNullOrEmpty(homeJson))
             {
                 home = new Home { Rooms = new List<Room>() };
-            } else
+            }
+            else
             {
                 home = JsonConvert.DeserializeObject<Home>(homeJson);
             }
@@ -185,7 +187,7 @@ namespace Project4.Controllers
             {
                 home.HomeImages = new List<HomeImage>();
             }
-             
+
             if (imageFile != null)
             {
                 using (MemoryStream stream = new MemoryStream())
@@ -234,6 +236,28 @@ namespace Project4.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return RedirectToAction("Create", home);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult SendEmail()
+        {
+            Email emailObj = new Email();
+            string strTo = "tuo76098@temple.edu";
+            string? strFrom = "tun93460@temple.edu";
+            string strSubject = "Offer Accepted";
+            string strMessage = "Congratulations, Your offer has been accepted. Welcome to your new home";
+
+            try
+            {
+                emailObj.SendMail(strTo, strFrom, strSubject, strMessage);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return View("SendEmail");
         }
     }
 }
