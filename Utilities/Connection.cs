@@ -12,11 +12,11 @@ namespace Utilities
     {
         // Main Connection String - used for the published web application and project submissions.
         //String SqlConnectString = "server=cis-mssql1.temple.edu;Database=fa24_3342_tuo76098;User id=tuo76098;Password=cooJa7eexaiy";
-        //String SqlConnectString = "server=cis-mssql1.temple.edu;Database=fa24_3342_tun93460;User id=tun93460;Password=koh4nahHah7i";
+        String SqlConnectString = "server=cis-mssql1.temple.edu;Database=fa24_3342_tun93460;User id=tun93460;Password=koh4nahHah7i";
 
         // Home Connection String - used for working from home using SSH Tunneling.
         //String SqlConnectString = "server=127.0.0.1,5555;Database=fa24_3342_tuo76098;User id=tuo76098;Password=cooJa7eexaiy";
-        String SqlConnectString = "server=127.0.0.1,5555;Database=fa24_3342_tun93460;User id=tun93460;Password=koh4nahHah7i";
+        //String SqlConnectString = "server=127.0.0.1,5555;Database=fa24_3342_tun93460;User id=tun93460;Password=koh4nahHah7i";
 
         SqlConnection myConnectionSql;
         SqlCommand objCmd;

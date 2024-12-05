@@ -91,15 +91,30 @@
                 <div class="list-group-item">
                     <div class="d-flex justify-content-between align-items-center">
                         <span>
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <strong>@utility.UtilityType</strong>
+                            <input type="checkbox" name="selectedUtilities" value="@utility.UtilityID" id="utility-@utility.UtilityID" class="form-check-input">
+                            <label for="utility-@utility.UtilityID" class="form-check-label">
+                                @utility.UtilityType
+                            </label>
                         </span>
-                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#utility-@utility.UtilityType.Replace(" ", "-")">
-                            Details
-                        </button>
                     </div>
-                    <div class="collapse mt-2" id="utility-@utility.UtilityType.Replace(" ", "-")">
-                        <p class="mb-0 text-muted">@utility.UtilityDescription</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h3>Amenities</h3>
+        <div class="list-group">
+            @foreach (Amenity amenity in Model.Amenities)
+            {
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>
+                            <input type="checkbox" name="selectedAmenities" value="@amenity.AmenityID" id="amenity-@amenity.AmenityID" class="form-check-input">
+                            <label for="amenity-@amenity.AmenityID" class="form-check-label">
+                                @amenity.AmenityType
+                            </label>
+                        </span>
                     </div>
                 </div>
             }

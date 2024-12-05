@@ -93,7 +93,7 @@ namespace Project4.Models
 
             return home;
         }
-            
+
 
         public List<Home> GetAllHomeIDs()
         {
@@ -104,7 +104,7 @@ namespace Project4.Models
 
             if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
-                foreach (DataRow row in  ds.Tables[0].Rows)
+                foreach (DataRow row in ds.Tables[0].Rows)
                 {
                     home = GetHomeByID(Convert.ToInt32(row["homeID"]));
                     homes.Add(home);
@@ -172,12 +172,12 @@ namespace Project4.Models
 
         public List<Amenity> GetAmenitiesByHomeID(int homeID)
         {
-            
+
             SqlCommand cmdGetAmenities = new SqlCommand("GetAmenitiesByHomeID");
             cmdGetAmenities.CommandType = CommandType.StoredProcedure;
             cmdGetAmenities.Parameters.Clear();
             cmdGetAmenities.Parameters.AddWithValue("@HomeID", homeID);
-            
+
             ds = dbConnect.GetDataSetUsingCmdObj(cmdGetAmenities);
 
             if (ds.Tables[0].Rows.Count > 0)
@@ -186,10 +186,10 @@ namespace Project4.Models
                 {
                     amenity = new Amenity
                     {
-                        AmenitiesID = Convert.ToInt32(row["amenitiesID"]),
-                        AmenitiesName = row["AmenitiesType"].ToString()
+                        AmenityID = Convert.ToInt32(row["amenitiesID"]),
+                        AmenityType = row["AmenitiesType"].ToString()
                     };
-                    amenities.Add(amenity);    
+                    amenities.Add(amenity);
                 }
             }
             cmdGetAmenities.Parameters.Clear();
@@ -276,6 +276,189 @@ namespace Project4.Models
             }
             return images;
         }
+
+        public int CreateHome(string propertyType, int homeSizeTotal, int bedroomCount, int bathroomCount, string yearBuilt, string garage, string description, string askingPrice, string status, string listingDate, int homeAddressID, int brokerID)
+        {
+            SqlCommand cmdHome = new SqlCommand("InsertHome");
+            cmdHome.CommandType = CommandType.StoredProcedure;
+            cmdHome.Parameters.Clear();
+
+            cmdHome.Parameters.AddWithValue("@PropType", propertyType);
+            cmdHome.Parameters.AddWithValue("@HomeSize", homeSizeTotal);
+            cmdHome.Parameters.AddWithValue("@NumBedrooms", bedroomCount);
+            cmdHome.Parameters.AddWithValue("@NumBathrooms", bathroomCount);
+            cmdHome.Parameters.AddWithValue("@YearBuilt", yearBuilt);
+            cmdHome.Parameters.AddWithValue("@GarageType", garage);
+            cmdHome.Parameters.AddWithValue("@HomeDesc", description);
+            cmdHome.Parameters.AddWithValue("@AskingPrice", askingPrice);
+            cmdHome.Parameters.AddWithValue("@Status", status);
+            cmdHome.Parameters.AddWithValue("@DateEntered", DateTime.Now);
+
+            cmdHome.Parameters.AddWithValue("@HomeAddressID", homeAddressID);
+            cmdHome.Parameters.AddWithValue("@BrokerID", brokerID);
+
+            object result = dbConnect.ExecuteScalarFunction(cmdHome);
+            return Convert.ToInt32(result);
+        }
+
+        public int CreateAmenities(string amenitiesType)
+        {
+            SqlCommand cmdAmenities = new SqlCommand("InsertAmenities");
+            cmdAmenities.CommandType = CommandType.StoredProcedure;
+            cmdAmenities.Parameters.Clear();
+
+            cmdAmenities.Parameters.AddWithValue("@AmenitiesType", amenitiesType);
+
+            object result = dbConnect.ExecuteScalarFunction(cmdAmenities);
+            return Convert.ToInt32(result);
+        }
+
+        public int CreateRoom(string roomType, string roomDescription, decimal roomWidth, decimal roomLength)
+        {
+            SqlCommand cmdRoom = new SqlCommand("InsertRoom");
+            cmdRoom.CommandType = CommandType.StoredProcedure;
+            cmdRoom.Parameters.Clear();
+
+            cmdRoom.Parameters.AddWithValue("@RoomType", roomType);
+            cmdRoom.Parameters.AddWithValue("@RoomDescription", roomDescription);
+            cmdRoom.Parameters.AddWithValue("@RoomWidth", roomWidth);
+            cmdRoom.Parameters.AddWithValue("@RoomLength", roomLength);
+
+            object result = dbConnect.ExecuteScalarFunction(cmdRoom);
+            return Convert.ToInt32(result);
+        }
+
+        public int CreateUtilities(string utilitiesType)
+        {
+            SqlCommand cmdUtilities = new SqlCommand("InsertUtilities");
+            cmdUtilities.CommandType = CommandType.StoredProcedure;
+            cmdUtilities.Parameters.Clear();
+
+            cmdUtilities.Parameters.AddWithValue("@UtilitiesType", utilitiesType);
+
+            object result = dbConnect.ExecuteScalarFunction(cmdUtilities);
+            return Convert.ToInt32(result);
+        }
+
+        public int CreateImage(byte[] imageData, string imageCaption, string fileExtension, string imageName, string imageType, int imageSize)
+        {
+            SqlCommand cmdImage = new SqlCommand("InsertImage");
+            cmdImage.CommandType = CommandType.StoredProcedure;
+            cmdImage.Parameters.Clear();
+
+            cmdImage.Parameters.AddWithValue("@ImageData", imageData);
+            cmdImage.Parameters.AddWithValue("@ImageCaption", imageCaption);
+            cmdImage.Parameters.AddWithValue("@FileExtension", fileExtension);
+            cmdImage.Parameters.AddWithValue("@ImageName", imageName);
+            cmdImage.Parameters.AddWithValue("@ImageType", imageType);
+            cmdImage.Parameters.AddWithValue("@ImageSize", imageSize);
+
+            object result = dbConnect.ExecuteScalarFunction(cmdImage);
+            return Convert.ToInt32(result);
+        }
+
+        public int CreateAddress(string city, string state, string street, int zip)
+        {
+            SqlCommand cmdAddress = new SqlCommand("InsertAddress");
+            cmdAddress.CommandType = CommandType.StoredProcedure;
+            cmdAddress.Parameters.Clear();
+
+            cmdAddress.Parameters.AddWithValue("@City", city);
+            cmdAddress.Parameters.AddWithValue("@State", state);
+            cmdAddress.Parameters.AddWithValue("@Street", street);
+            cmdAddress.Parameters.AddWithValue("@Zip", zip);
+
+            object result = dbConnect.ExecuteScalarFunction(cmdAddress);
+            return Convert.ToInt32(result);
+        }
+
+        public void LinkHomeWithAddress(int homeID, int addressID)
+        {
+            SqlCommand cmdHomeAddress = new SqlCommand("InsertHomeAddress");
+            cmdHomeAddress.CommandType = CommandType.StoredProcedure;
+            cmdHomeAddress.Parameters.Clear();
+
+            cmdHomeAddress.Parameters.AddWithValue("@HomeID", homeID);
+            cmdHomeAddress.Parameters.AddWithValue("@AddressID", addressID);
+
+            dbConnect.ExecuteScalarFunction(cmdHomeAddress);
+        }
+
+        public void LinkHomeWithAmenities(int homeID, int amenitiesID)
+        {
+            SqlCommand cmdHomeAmenities = new SqlCommand("InsertHomeAmenities");
+            cmdHomeAmenities.CommandType = CommandType.StoredProcedure;
+            cmdHomeAmenities.Parameters.Clear();
+
+            cmdHomeAmenities.Parameters.AddWithValue("@HomeID", homeID);
+            cmdHomeAmenities.Parameters.AddWithValue("@AmenitiesID", amenitiesID);
+
+            dbConnect.ExecuteScalarFunction(cmdHomeAmenities);
+        }
+
+        public void LinkHomeWithRoom(int homeID, int roomID)
+        {
+            SqlCommand cmdHomeRoom = new SqlCommand("InsertHomeRoom");
+            cmdHomeRoom.CommandType = CommandType.StoredProcedure;
+            cmdHomeRoom.Parameters.Clear();
+
+            cmdHomeRoom.Parameters.AddWithValue("@HomeID", homeID);
+            cmdHomeRoom.Parameters.AddWithValue("@RoomID", roomID);
+
+            dbConnect.ExecuteScalarFunction(cmdHomeRoom);
+        }
+
+        public void LinkHomeWithUtilities(int homeID, int utilitiesID)
+        {
+            SqlCommand cmdHomeUtilities = new SqlCommand("InsertHomeUtilities");
+            cmdHomeUtilities.CommandType = CommandType.StoredProcedure;
+            cmdHomeUtilities.Parameters.Clear();
+
+            cmdHomeUtilities.Parameters.AddWithValue("@HomeID", homeID);
+            cmdHomeUtilities.Parameters.AddWithValue("@UtilitiesID", utilitiesID);
+
+            dbConnect.ExecuteScalarFunction(cmdHomeUtilities);
+        }
+
+        public void LinkHomeWithImage(int homeID, int imageID)
+        {
+            SqlCommand cmdHomeImage = new SqlCommand("InsertHomeImage");
+            cmdHomeImage.CommandType = CommandType.StoredProcedure;
+            cmdHomeImage.Parameters.Clear();
+
+            cmdHomeImage.Parameters.AddWithValue("@HomeID", homeID);
+            cmdHomeImage.Parameters.AddWithValue("@ImageID", imageID);
+
+            dbConnect.ExecuteScalarFunction(cmdHomeImage);
+        }
+
+        public void LinkHomeWithBroker(int homeID, int brokerID)
+        {
+            SqlCommand cmdHomeBroker = new SqlCommand("InsertHomeBroker");
+            cmdHomeBroker.CommandType = CommandType.StoredProcedure;
+            cmdHomeBroker.Parameters.Clear();
+
+            cmdHomeBroker.Parameters.AddWithValue("@HomeID", homeID);
+            cmdHomeBroker.Parameters.AddWithValue("@BrokerID", brokerID);
+
+            dbConnect.ExecuteScalarFunction(cmdHomeBroker);
+        }
+
+        public DataSet GetUtilities()
+        {
+            SqlCommand cmdUtilities = new SqlCommand("GetUtilities");
+            cmdUtilities.CommandType = CommandType.StoredProcedure;
+            cmdUtilities.Parameters.Clear();
+            return dbConnect.GetDataSetUsingCmdObj(cmdUtilities);
+        }
+        public DataSet GetAmenities()
+        {
+            SqlCommand cmdAmenities = new SqlCommand("GetAmenities");
+            cmdAmenities.CommandType = CommandType.StoredProcedure;
+            cmdAmenities.Parameters.Clear();
+            return dbConnect.GetDataSetUsingCmdObj(cmdAmenities);
+        }
+
 
     }
 }

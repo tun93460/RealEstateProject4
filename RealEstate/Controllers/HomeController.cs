@@ -259,5 +259,46 @@ namespace Project4.Controllers
 
             return View("SendEmail");
         }
+
+        public IActionResult CreateHome()
+        {
+            DataSet utilitiesData = hda.GetUtilities();
+            DataSet amenitiesData = hda.GetAmenities();
+
+            List<Utility> utilities = new List<Utility>();
+            if (utilitiesData != null && utilitiesData.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow row in utilitiesData.Tables[0].Rows)
+                {
+                    utilities.Add(new Utility
+                    {
+                        UtilityID = Convert.ToInt32(row["UtilityID"]),
+                        UtilityType = row["UtilityType"].ToString()
+                    });
+                }
+            }
+
+            List<Amenity> amenities = new List<Amenity>();
+            if (amenitiesData != null && amenitiesData.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow row in amenitiesData.Tables[0].Rows)
+                {
+                    amenities.Add(new Amenity
+                    {
+                        AmenityID = Convert.ToInt32(row["AmenitiesID"]),
+                        AmenityType = row["AmenitiesType"].ToString()
+                    });
+                }
+            }
+
+            // Create the view model and pass it to the view
+            var model = new HomeCreateViewModel
+            {
+                Utilities = utilities,
+                Amenities = amenities
+            };
+
+            return View(model);
+        }
     }
 }
