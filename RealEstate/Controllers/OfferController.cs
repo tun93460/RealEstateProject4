@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Project4.Models;
+using Project4.Models.Utilities;
 
 
 namespace Project4.Controllers
@@ -57,11 +59,12 @@ namespace Project4.Controllers
             //get offer from tempdata
             string offerJson = TempData["Offer"].ToString();
             Offer offer;
-            
+
             if (string.IsNullOrEmpty(offerJson))
             {
                 offer = new Offer { Contingencies = new List<Contingency>() };
-            } else
+            }
+            else
             {
                 offer = JsonConvert.DeserializeObject<Offer>(offerJson);
             }
@@ -88,6 +91,23 @@ namespace Project4.Controllers
             TempData["Offer"] = JsonConvert.SerializeObject(offer);
 
             return View("Offer", offer);
+
+
+
+
+            Email emailObj = new Email();
+            String strTo = "tuo84072@temple.edu";
+            String? strFrom = HttpContext.Session.GetString("BrokerEmail");
+            String strSubject = "Offer Accepted";
+            String strMessage = "Congratulations, Your offer has been accepted. Welcome to your new home";
+            try
+            {
+                emailObj.SendMail(strTo, strFrom, strSubject, strMessage);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
     }
 }

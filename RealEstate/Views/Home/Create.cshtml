@@ -1,112 +1,197 @@
-﻿@model Project4.Models.Home 
+﻿@model Project4.Models.Home
 
-<h1>Create Home</h1> 
-<form asp-action="SaveHome" method="post"> 
-    <div class="form-group"> 
-        <label asp-for="Address.Street"></label> 
-        <input asp-for="Address.Street" class="form-control" placeholder="Street" /> 
+<h1>Create Home</h1>
+<form asp-action="SaveHome" method="post">
+    <div class="form-group">
+        <label asp-for="Address.Street"></label>
+        <input asp-for="Address.Street" class="form-control" placeholder="Street" />
         <span asp-validation-for="Address.Street" class="text-danger"></span>
-    </div> 
-    <div class="form-group"> 
-        <label asp-for="Address.City"></label> 
-        <input asp-for="Address.City" class="form-control" placeholder="City" /> 
+    </div>
+    <div class="form-group">
+        <label asp-for="Address.City"></label>
+        <input asp-for="Address.City" class="form-control" placeholder="City" />
         <span asp-validation-for="Address.City" class="text-danger"></span>
-    </div> 
-    <div class="form-group"> 
-        <label asp-for="Address.State"></label> 
-        <input asp-for="Address.State" class="form-control" placeholder="State" /> 
+    </div>
+    <div class="form-group">
+        <label asp-for="Address.State"></label>
+        <input asp-for="Address.State" class="form-control" placeholder="State" />
         <span asp-validation-for="Address.State" class="text-danger"></span>
-    </div> 
-    <div class="form-group"> 
-        <label asp-for="Address.Zip"></label> 
-        <input asp-for="Address.Zip" class="form-control" placeholder="Zip Code" /> 
+    </div>
+    <div class="form-group">
+        <label asp-for="Address.Zip"></label>
+        <input asp-for="Address.Zip" class="form-control" placeholder="Zip Code" />
         <span asp-validation-for="Address.Zip" class="text-danger"></span>
-    </div> 
-
-    <div class="form-group"> 
-        <label asp-for="PropertyType"></label> 
-        <select asp-for="PropertyType" class="form-control"> 
-            <option value="">Select Property Type</option> 
-            <option value="Condo">Condo</option> 
-            <option value="Townhouse">Townhouse</option> 
-            <option value="Single Family">Single Family</option> 
-            <option value="Multi Family">Multi Family</option> 
-        </select> 
-        <span asp-validation-for="PropertyType" class="text-danger"></span>
-    </div> 
-    <div class="form-group"> 
-        <label asp-for="Price"></label> 
-        <input asp-for="Price" type="number" class="form-control" placeholder="Price" /> 
+    </div>
+    <div class="form-group">
+        <label asp-for="PropertyType"></label>
+        <select asp-for="PropertyType" class="form-control-select">
+            <option value="">Select a property Type</option>
+            <option value="Condo" selected="@if(Model.PropertyType == "Condo") { <text>selected</text> }">Condo</option>
+            <option value="Townhouse" selected="@if(Model.PropertyType == "Townhouse") { <text>selected</text> }">Townhouse</option>
+            <option value="Single Family" selected="@if(Model.PropertyType == "SingleFamily") { <text>selected</text> }">Single Family</option>
+            <option value="Multi Family" selected="@if(Model.PropertyType == "MultiFamily") { <text>selected</text> }">Multi Family</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="Price"></label>
+        <input asp-for="Price" type="number" class="form-control" placeholder="Price" />
         <span asp-validation-for="Price" class="text-danger"></span>
-    </div> 
+    </div>
+    <div class="form-group">
+        <label asp-for="Size"></label>
+        <input asp-for="Size" type="number" class="form-control" placeholder="Size (sq ft)" />
+        <span asp-validation-for="Size" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Bedrooms"></label>
+        <input asp-for="Bedrooms" type="number" class="form-control" placeholder="Number of Bedrooms" />
+        <span asp-validation-for="Bedrooms" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Bathrooms"></label>
+        <input asp-for="Bathrooms" type="number" class="form-control" placeholder="Number of Bathrooms" />
+        <span asp-validation-for="Bathrooms" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="YearBuilt"></label>
+        <input asp-for="YearBuilt" type="number" class="form-control" placeholder="Year Built" />
+        <span asp-validation-for="YearBuilt" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="GarageType"></label>
+        <input asp-for="GarageType" class="form-control" placeholder="Garage Type" />
+        <span asp-validation-for="GarageType" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="HvacInfo"></label>
+        <input asp-for="HvacInfo" class="form-control" placeholder="HVAC Information" />
+        <span asp-validation-for="HvacInfo" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="HomeDesc"></label>
+        <textarea asp-for="HomeDesc" class="form-control" placeholder="Home Description"></textarea>
+        <span asp-validation-for="HomeDesc" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Status"></label>
+        <select asp-for="Status" class="form-control">
+            <option value="">Select Status</option>
+            <option value="Available">Available</option>
+            <option value="Pending">Pending</option>
+            <option value="Sold">Sold</option>
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
 
+    <div class="mt-4">
+        <h3>Utilities</h3>
+        <div class="list-group">
+            @foreach (Utility utility in Model.Utilities)
+            {
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <strong>@utility.UtilityType</strong>
+                        </span>
+                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#utility-@utility.UtilityType.Replace(" ", "-")">
+                            Details
+                        </button>
+                    </div>
+                    <div class="collapse mt-2" id="utility-@utility.UtilityType.Replace(" ", "-")">
+                        <p class="mb-0 text-muted">@utility.UtilityDescription</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
 
- 
-    @if (Model.Rooms != null) 
-    { 
-        <ul> 
-            @foreach (var room in Model.Rooms) 
-            { 
-                <li> 
-                    @room.RoomType 
-                    @room.RoomDescription 
-                    (@room.RoomLength ft x @room.RoomWidth ft) 
-                    <form asp-action="DeleteRoom" method="post"> 
-                        <input type="hidden" name="roomId" value="@room.RoomID" /> 
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button> 
-                    </form> 
-                </li> 
-            } 
-        </ul> 
-    } 
+    <div class="mt-4">
+        <h3>Rooms</h3>
+        <div class="list-group">
+            @foreach (Room room in Model.Rooms)
+            {
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <strong>@room.RoomType</strong>
+                        </span>
+                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#room-@room.RoomType.Replace(" ", "-")">
+                            Details
+                        </button>
+                    </div>
+                    <div class="collapse mt-2" id="room-@room.RoomType.Replace(" ", "-")">
+                        <p class="mb-0 text-muted">@room.RoomDescription</p>
+                        <p class="mb-0 text-muted">Dimensions: @room.RoomLength X @room.RoomWidth</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    </div>
 
-    <form asp-action="AddRoom" method="post"> 
-        <div class="form-group"> 
-            <label>Room Type</label> 
-            <input name="roomType" class="form-control" placeholder="Room Type" /> 
-        </div> 
-        <div class="form-group"> 
-            <label>Room Description</label> 
-            <textarea name="roomDescription" class="form-control" placeholder="Room Description"></textarea> 
-        </div> 
-        <div class="form-group"> 
-            <label>Room Length</label> 
-            <input name="roomLength" type="number" class="form-control" placeholder="Room Length (ft)" /> 
-        </div> 
-        <div class="form-group"> 
-            <label>Room Width</label> 
-            <input name="roomWidth" type="number" class="form-control" placeholder="Room Width (ft)" /> 
-        </div> 
-        <button type="submit" class="btn btn-secondary">Add Room</button> 
-    </form> 
-
-    @if (Model.HomeImages != null) 
-    { 
-        <ul> 
-            @foreach (var image in Model.HomeImages) 
-            { 
-                <li> 
-                    @image.ImageCaption 
-                    <form asp-action="DeleteImage" method="post"> 
-                        <input type="hidden" name="imageId" value="@image.ImageID" /> 
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button> 
-                    </form> 
-                </li> 
-            } 
-        </ul> 
-    } 
-
-    <form asp-action="AddImage" method="post"> 
-        <div class="form-group"> 
-            <label asp-for="ImageFile">Upload Image</label> 
-            <input asp-for="ImageFile" type="file" class="form-control" /> 
-        </div> 
-        <div class="form-group"> 
-            <label>Image Caption</label> 
-            <input name="imageCaption" class="form-control" placeholder="Image Caption" /> 
-        </div> 
-        <button type="submit" class="btn btn-secondary">Add Image</button> 
-    </form> 
-
-    <button type="submit" class="btn btn-primary">Save Home</button> 
-</form> 
+    @if (Model.Rooms != null)
+    {
+        <ul>
+            @foreach (var room in Model.Rooms)
+            {
+                <li>
+                    @room.RoomType
+                    @room.RoomDescription
+                    (@room.RoomLength ft x @room.RoomWidth ft)
+                    <form asp-action="DeleteRoom" method="post">
+                        <input type="hidden" name="roomId" value="@room.RoomID" />
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    }
+    <form asp-action="AddRoom" method="post">
+        <div class="form-group">
+            <label>Room Type</label>
+            <input name="roomType" class="form-control" placeholder="Room Type" />
+        </div>
+        <div class="form-group">
+            <label>Room Description</label>
+            <textarea name="roomDescription" class="form-control" placeholder="Room Description"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Room Length</label>
+            <input name="roomLength" type="number" class="form-control" placeholder="Room Length (ft)" />
+        </div>
+        <div class="form-group">
+            <label>Room Width</label>
+            <input name="roomWidth" type="number" class="form-control" placeholder="Room Width (ft)" />
+        </div>
+        <button type="submit" class="btn btn-secondary">Add Room</button>
+    </form>
+    @if (Model.HomeImages != null)
+    {
+        <ul>
+            @foreach (var image in Model.HomeImages)
+            {
+                <li>
+                    @image.ImageCaption
+                    <form asp-action="DeleteImage" method="post">
+                        <input type="hidden" name="imageId" value="@image.ImageID" />
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    }
+    <form asp-action="AddImage" method="post">
+        <div class="form-group">
+            <label asp-for="ImageFile">Upload Image</label>
+            <input asp-for="ImageFile" type="file" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Image Caption</label>
+            <input name="imageCaption" class="form-control" placeholder="Image Caption" />
+        </div>
+        <button type="submit" class="btn btn-secondary">Add Image</button>
+    </form>
+    <button type="submit" class="btn btn-primary">Save Home</button>
+</form>

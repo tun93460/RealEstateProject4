@@ -1,60 +1,71 @@
 ﻿@{
     ViewData["Title"] = "Search Homes";
 }
-
 <div class="container">
-    <h2>Search Homes - @ViewData["Message"]</h2>
+    <h2 class="text-center mb-4">Search Homes - @ViewData["Message"]</h2>
     <form asp-controller="Home" asp-action="SearchHomes" method="post">
-        <div class="form-group">
-            <label class="form-label">Location</label>
-            <input type="text" id="Location" name="Location" class="form-control" placeholder="Enter Location" />
+        <div class="row g-3 align-items-center">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label for="Location" class="form-label">Location</label>
+                    <input type="text" id="Location" name="Location" class="form-control form-control-sm" placeholder="Enter Location" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="propertyType" class="form-label">Property Type</label>
+                    <select name="propertyType" id="propertyType" class="form-control form-control-sm">
+                        <option value="">Select</option>
+                        <option value="Condo">Condo</option>
+                        <option value="Townhouse">Townhouse</option>
+                        <option value="Single Family">Single Family</option>
+                        <option value="Multi Family">Multi Family</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="minBedrooms" class="form-label">Min Bedrooms</label>
+                    <input type="number" id="minBedrooms" name="minBedrooms" class="form-control form-control-sm" placeholder="Min Bedrooms" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="minBathrooms" class="form-label">Min Bathrooms</label>
+                    <input type="number" id="minBathrooms" name="minBathrooms" class="form-control form-control-sm" placeholder="Min Bathrooms" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="minPrice" class="form-label">Min Price</label>
+                    <input type="text" id="minPrice" name="minPrice" class="form-control form-control-sm" placeholder="Min Price" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="maxPrice" class="form-label">Max Price</label>
+                    <input type="text" id="maxPrice" name="maxPrice" class="form-control form-control-sm" placeholder="Max Price" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="minHomeSize" class="form-label">Min Home Size</label>
+                    <input type="text" id="minHomeSize" name="minHomeSize" class="form-control form-control-sm" placeholder="Min Home Size" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="amenities" class="form-label">Amenities</label>
+                    <input type="text" id="amenities" name="amenities" class="form-control form-control-sm" placeholder="Amenities" />
+                </div>
+            </div>
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary btn-lg w-100">Search</button>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label class="form-label">Property Type</label><br />
-            <select name="propertyType" id="propertyType" class="form-control-select">
-                <option value="">Select a property Type</option>
-                <option value="Condo">Condo</option>
-                <option value="Townhouse">Townhouse</option>
-                <option value="Single Family">Single Family</option>
-                <option value="Multi Family">Multi Family</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Min Bedrooms</label>
-            <input type="number" id="minBedrooms" name="minBedrooms" class="form-control" placeholder="Enter Minimum Bedrooms" />
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Min Bathrooms</label>
-            <input type="number" id="minBathrooms" name="minBathrooms" class="form-control" placeholder="Enter Minimum Bathrooms" />
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Min Price</label>
-            <input type="text" id="minPrice" name="minPrice" class="form-control" placeholder="Enter Minimum Price" />
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Max Price</label>
-            <input type="text" id="maxPrice" name="maxPrice" class="form-control" placeholder="Enter Maximum Price" />
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Minimum Home Size</label>
-            <input type="text" id="minHomeSize" name="minHomeSize" class="form-control" placeholder="Enter Minimum Home Size" />
-        </div>
-
-        @{ /* change to checkbox list */}
-        <div class="form-group">
-            <label class="form-label">Amenities</label>
-            <input type="text" id="amenities" name="amenities" class="form-control" placeholder="Enter Amenities" />
-        </div>
-
-        <button type="submit" class="btn btn-primary">Search</button>
     </form>
 </div>
+
 
 @model List<Project4.Models.Home>
 
