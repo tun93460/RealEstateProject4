@@ -187,7 +187,6 @@ namespace Project4.Models
                     amenity = new Amenity
                     {
                         AmenitiesID = Convert.ToInt32(row["amenitiesID"]),
-                        AmenitiesDescription = row["amenitiesDescription"].ToString(),
                         AmenitiesName = row["AmenitiesType"].ToString()
                     };
                     amenities.Add(amenity);    
@@ -213,7 +212,6 @@ namespace Project4.Models
                     utility = new Utility
                     {
                         UtilityID = Convert.ToInt32(row["utilitiesID"]),
-                        UtilityDescription = row["utilitiesDescription"].ToString(),
                         UtilityType = row["utilitiesType"].ToString()
                     };
                     utilities.Add(utility);

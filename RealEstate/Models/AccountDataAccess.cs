@@ -92,6 +92,7 @@ namespace Project4.Models
 
         public int RegisterPersonalInfo(int addressID, string personalPhone, string personalEmail)
         {
+            objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "InsertPersonalInfo";
 
@@ -115,21 +116,27 @@ namespace Project4.Models
 
         public int RegisterWorkInfo(int addressID, string companyName, string workPhone, string workEmail)
         {
-            SqlConnection connection = dbObj.GetConnection();
-            connection.Open();
+            objCommand.Parameters.Clear();
+            objCommand.CommandType = CommandType.StoredProcedure;
+            objCommand.CommandText = "InserWorkInfo";
 
-            SqlCommand cmd = new SqlCommand("InsertWorkInfo", connection);
-            cmd.CommandType = CommandType.StoredProcedure;
+            objCommand.Parameters.AddWithValue("@AddressID", addressID);
+            objCommand.Parameters.AddWithValue("@CompanyName", companyName);
+            objCommand.Parameters.AddWithValue("@WorkPhone", workPhone);
+            objCommand.Parameters.AddWithValue("@WorkEmail", workEmail);
 
-            cmd.Parameters.AddWithValue("@AddressID", addressID);
-            cmd.Parameters.AddWithValue("@CompanyName", companyName);
-            cmd.Parameters.AddWithValue("@WorkPhone", workPhone);
-            cmd.Parameters.AddWithValue("@WorkEmail", workEmail);
+            SqlParameter outputWorkInfoID = new SqlParameter("@NewWorkInfoID", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.Output
+            };
+            objCommand.Parameters.Add(outputWorkInfoID);
 
-            int newWorkInfoID = Convert.ToInt32(cmd.ExecuteScalar());
+            dbObj.DoUpdateUsingCmdObj(objCommand);
 
-            connection.Close();
-            return newWorkInfoID;
+            int outputID = (outputWorkInfoID.Value != DBNull.Value) ? (int)outputWorkInfoID.Value : 0;
+
+            objCommand.Parameters.Clear();
+            return outputID;
         }
 
 
