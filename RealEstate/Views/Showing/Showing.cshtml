@@ -1,7 +1,7 @@
 ﻿@model Project4.Models.Showing
 
 <h1>Schedule a Showing</h1>
-<form asp-action="SaveShowing" method="post">
+<form asp-action="SaveShowing" asp-controller="Showing" method="post">
     <div class="form-group">
         <label asp-for="ContactInfo.Name"></label>
         <input asp-for="ContactInfo.Name" class="form-control" placeholder="Enter Your Name" />

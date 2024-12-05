@@ -19,6 +19,8 @@ namespace Project4.Controllers
             };
 
             TempData["Offer"] = JsonConvert.SerializeObject(offer);
+            TempData.Keep("Offer");
+
             return View(offer);
         }
 
@@ -89,6 +91,7 @@ namespace Project4.Controllers
             });
 
             TempData["Offer"] = JsonConvert.SerializeObject(offer);
+            TempData.Keep("Offer");
 
             return View("Offer", offer);
 
