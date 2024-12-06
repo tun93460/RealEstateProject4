@@ -69,20 +69,6 @@ namespace Project4.Controllers
 
 
 
-        private List<Amenity> GetAmenities(int homeID)
-        {
-            List<Amenity> amenities = hda.GetAmenitiesByHomeID(homeID);
-
-            return amenities;
-        }
-
-		private List<Amenity> GetUtilities(int homeID)
-		{
-			List<Amenity> amenities = hda.GetAmenitiesByHomeID(homeID);
-
-			return amenities;
-		}
-
 		public IActionResult ViewHome(int id)
         {
             ViewData["Title"] = "Viewing Home - ID:" + id;
@@ -150,23 +136,46 @@ namespace Project4.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddRoom(string roomType, string roomDescription, int roomLength, int roomWidth)
+        public IActionResult AddRoom(string roomType, string roomDescription, double roomLength, double roomWidth,
+                                      List<int> selectedUtilities, List<int> selectedAmenities)
         {
             string homeJson = TempData["Home"]?.ToString();
             Home home;
 
             if (!string.IsNullOrEmpty(homeJson))
             {
-                home = new Home { Rooms = new List<Room>() };
+                home = JsonConvert.DeserializeObject<Home>(homeJson);
             }
             else
             {
-                home = JsonConvert.DeserializeObject<Home>(homeJson);
+                home = new Home();
             }
 
-            if (home.Rooms == null)
+            home.SelectedUtilities = selectedUtilities ?? new List<int>();
+            home.SelectedAmenities = selectedAmenities ?? new List<int>();
+
+            if (selectedUtilities != null)
             {
-                home.Rooms = new List<Room>();
+                foreach (var utilityId in selectedUtilities)
+                {
+                    var utility = hda.GetUtilities().FirstOrDefault(u => u.UtilityID == utilityId);
+                    if (utility != null)
+                    {
+                        home.AddUtility(utility);
+                    }
+                }
+            }
+
+            if (selectedAmenities != null)
+            {
+                foreach (var amenityId in selectedAmenities)
+                {
+                    var amenity = hda.GetAmenities().FirstOrDefault(a => a.AmenityID == amenityId);
+                    if (amenity != null)
+                    {
+                        home.AddAmenity(amenity);
+                    }
+                }
             }
 
             home.Rooms.Add(new Room
@@ -179,8 +188,17 @@ namespace Project4.Controllers
 
             TempData["Home"] = JsonConvert.SerializeObject(home);
 
+            List<Utility> utilities = hda.GetUtilities();
+            List<Amenity> amenities = hda.GetAmenities();
+
+            ViewBag.Utilities = utilities;
+            ViewBag.Amenities = amenities;
+
             return View("Create", home);
         }
+
+
+
 
 
         [HttpPost]
@@ -296,6 +314,8 @@ namespace Project4.Controllers
                     Debug.WriteLine("Failed to create Home. Aborting Home creation.");
                     return RedirectToAction("Index");
                 }
+
+                hda.LinkHomeWithBroker(homeId, 3);
 
                 foreach (var room in existingHome.Rooms)
                 {
