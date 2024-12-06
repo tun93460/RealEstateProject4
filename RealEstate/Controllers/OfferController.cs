@@ -10,42 +10,22 @@ namespace Project4.Controllers
 {
     public class OfferController : Controller
     {
+        OfferDataAccess oda = new OfferDataAccess();
 
         public IActionResult Offer()
         {
-            Offer offer = new Offer
-            {
-                Contingencies = new List<Contingency>()
-            };
-
-            TempData["Offer"] = JsonConvert.SerializeObject(offer);
-            TempData.Keep("Offer");
+            Offer offer = new Offer();
 
             return View(offer);
         }
 
-        public IActionResult SubmitOffer()
+        public IActionResult SubmitOffer(Offer offer)
         {
-
-            string offerJson = TempData["Offer"].ToString();
-            Offer offer;
-
-            if (string.IsNullOrEmpty(offerJson))
-            {
-                offer = new Offer { Contingencies = new List<Contingency>() };
-            }
-            else
-            {
-                offer = JsonConvert.DeserializeObject<Offer>(offerJson);
-            }
-
 
             if (ModelState.IsValid)
             {
                 //add to database
-
-                //clear current offer from temp data
-                TempData.Remove("Offer");
+                //oda.InsertOffer(offer);
 
                 //redirect to home view
                 ViewData["Message"] = "Your offer has been submitted.";
@@ -53,32 +33,11 @@ namespace Project4.Controllers
 
             }
 
-            return RedirectToAction("Offer");
+            return RedirectToAction("Offer", offer);
         }
 
-        public IActionResult AddContingency(string contingencyName, string contingencyDescription)
+        public IActionResult AddContingency(Offer offer, string contingencyName, string contingencyDescription)
         {
-            //get offer from tempdata
-            string offerJson = TempData["Offer"].ToString();
-            Offer offer;
-
-            if (string.IsNullOrEmpty(offerJson))
-            {
-                offer = new Offer { Contingencies = new List<Contingency>() };
-            }
-            else
-            {
-                offer = JsonConvert.DeserializeObject<Offer>(offerJson);
-            }
-
-            if (offer == null)
-            {
-                offer = new Offer
-                {
-                    Contingencies = new List<Contingency>()
-                };
-            }
-
             if (offer.Contingencies == null)
             {
                 offer.Contingencies = new List<Contingency>();
@@ -90,14 +49,64 @@ namespace Project4.Controllers
                 ContingencyDescription = contingencyDescription
             });
 
-            TempData["Offer"] = JsonConvert.SerializeObject(offer);
-            TempData.Keep("Offer");
-
             return View("Offer", offer);
+        }
+
+        public IActionResult GetOffers(int accountID)
+        {
+            List<Offer> offers = oda.GetOffersByAccountID(accountID);
+
+            return View(offers);
+        }
+
+        public IActionResult DenyOffer(int offerID, int accountID)
+        {
+            //delete offer
+            //oda.DeleteOffer(offerID)
+
+            List<Offer> offers = oda.GetOffersByAccountID(accountID);
+
+            offers.RemoveAll(o  => o.OfferID == offerID);
+
+
+            return View("GetOffers");
+        }
+
+        public IActionResult AcceptOffer(Offer offer)
+        {
+            if (offer != null)
+            {
+                offer.OfferStatus = "Accepted";
+                //update offerstatus in db
+
+                Email emailObj = new Email();
+                try
+                {
+                    string strTo = offer.Contact.Email;
+                    string strFrom = offer.Listing.Account.WorkInfo.WorkEmail;
+                    string strSubject = "Offer Accepted";
+                    string strMessage = "Congratulations! Your offer has been accepted.";
+
+                    emailObj.SendMail(strTo, strFrom, strSubject, strMessage);
+                }
+                catch (Exception ex) 
+                {
+
+                }
+                TempData["Message"] = "Offer with ID: " + offer.OfferID + "has been accepted";
+            }
+            else
+            {
+                TempData["Message"] = "Offer with ID: " + offer.OfferID + "was not found";
+            }
+
+            return RedirectToAction("GetOffers");
+        }
 
 
 
-
+        public IActionResult Email(string offerStatus)
+        {
             Email emailObj = new Email();
             String strTo = "tuo84072@temple.edu";
             String? strFrom = HttpContext.Session.GetString("BrokerEmail");
@@ -111,6 +120,8 @@ namespace Project4.Controllers
             {
                 Debug.WriteLine(ex.Message);
             }
+
+            return View();
         }
     }
 }
