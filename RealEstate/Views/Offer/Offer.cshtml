@@ -12,37 +12,37 @@
 
     <div class="form-group">
 
-        <label asp-for="ContactInfo.Name"></label>
+        <label asp-for="Contact.Name"></label>
 
-        <input asp-for="ContactInfo.Name" class="form-control" placeholder="Enter Your Name" />
-        <span asp-validation-for="ContactInfo.Name" class="text-danger"></span>
-
-    </div>
-
-    <div class="form-group">
-
-        <label asp-for="ContactInfo.Email"></label>
-
-        <input asp-for="ContactInfo.Email" class="form-control" placeholder="Enter Your Email" />
-        <span asp-validation-for="ContactInfo.Email" class="text-danger"></span>
+        <input asp-for="Contact.Name" class="form-control" placeholder="Enter Your Name" />
+        <span asp-validation-for="Contact.Name" class="text-danger"></span>
 
     </div>
 
     <div class="form-group">
 
-        <label asp-for="ContactInfo.WorkEmail"></label>
+        <label asp-for="Contact.Email"></label>
 
-        <input asp-for="ContactInfo.WorkEmail" class="form-control" placeholder="Enter Work Email" />
-        <span asp-validation-for="ContactInfo.WorkEmail" class="text-danger"></span>
+        <input asp-for="Contact.Email" class="form-control" placeholder="Enter Your Email" />
+        <span asp-validation-for="Contact.Email" class="text-danger"></span>
 
     </div>
 
     <div class="form-group">
 
-        <label asp-for="ContactInfo.Phone"></label>
+        <label asp-for="Contact.WorkEmail"></label>
 
-        <input asp-for="ContactInfo.Phone" class="form-control" placeholder="Enter Phone Number" />
-        <span asp-validation-for="ContactInfo.Phone" class="text-danger"></span>
+        <input asp-for="Contact.WorkEmail" class="form-control" placeholder="Enter Work Email" />
+        <span asp-validation-for="Contact.WorkEmail" class="text-danger"></span>
+
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="Contact.Phone"></label>
+
+        <input asp-for="Contact.Phone" class="form-control" placeholder="Enter Phone Number" />
+        <span asp-validation-for="Contact.Phone" class="text-danger"></span>
 
     </div>
 

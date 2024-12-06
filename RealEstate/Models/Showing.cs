@@ -3,23 +3,21 @@
     public class Showing
     {
         private int? showingID;
-        private Contact? contactInfo;
+        private Contact? contact;
         private string showingDate;
-        private string preferredTime;
-        private Home? home;
+        private Listing? listing;
 
         public Showing()
         {
 
         }
 
-        public Showing(int? showingID, Contact? contactInfo, string showingDate, string preferredTime, Home? home)
+        public Showing(int? showingID, Contact? contact, string showingDate, Listing? listing)
         {
             this.showingID = showingID;
-            this.contactInfo = contactInfo;
+            this.contact = contact;
             this.showingDate = showingDate;
-            this.preferredTime = preferredTime;
-            this.home = home;
+            this.listing = listing;
         }
 
         public int? ShowingID
@@ -28,10 +26,10 @@
             set { showingID = value; }
         }
 
-        public Contact? ContactInfo
+        public Contact? Contact
         {
-            get { return contactInfo; }
-            set { contactInfo = value; }
+            get { return contact; }
+            set { contact = value; }
         }
 
         public string ShowingDate
@@ -40,16 +38,11 @@
             set { showingDate = value; }
         }
 
-        public string PreferredTime
-        {
-            get { return preferredTime; }
-            set { preferredTime = value; }
-        }
 
-        public Home Home
+        public Listing Listing
         {
-            get { return home; }
-            set { home = value; }
+            get { return listing; }
+            set { listing = value; }
         }
     }
 }

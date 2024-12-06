@@ -9,7 +9,7 @@ namespace Project4.Models
 
         private int? offerID;
 
-        private Contact? contactInfo;
+        private Contact? contact;
 
         private double amount;
 
@@ -36,7 +36,7 @@ namespace Project4.Models
 
 
 
-        public Offer(int? offerID, Contact? contactInfo, double amount, string saleType, string needsToSell,
+        public Offer(int? offerID, Contact? contact, double amount, string saleType, string needsToSell,
 
             DateTime moveInDate, string offerStatus, List<Contingency>? contingencies, Listing? listing)
 
@@ -44,7 +44,7 @@ namespace Project4.Models
 
             this.offerID = offerID;
 
-            this.contactInfo = contactInfo;
+            this.contact = contact;
 
             this.amount = amount;
 
@@ -76,13 +76,13 @@ namespace Project4.Models
 
 
 
-        public Contact? ContactInfo
+        public Contact? Contact
 
         {
 
-            get { return contactInfo; }
+            get { return contact; }
 
-            set { contactInfo = value; }
+            set { contact = value; }
 
         }
 

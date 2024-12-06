@@ -139,26 +139,21 @@ namespace Project4.Models
             return outputID;
         }
 
-
-
-
-        public Account GetAccountByAccountName(string accountName)
+        public Account GetAccountByID(int accountID)
         {
+            objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
-            objCommand.CommandText = "GetAccountByAccountName";
+            objCommand.CommandText = "GetAgentByAgentID";
 
-            objCommand.Parameters.AddWithValue("@AccountName", accountName);
+            objCommand.Parameters.AddWithValue("@AccountID", accountID);
 
-            // Execute the command to fetch the dataset
             ds = dbObj.GetDataSetUsingCmdObj(objCommand);
 
-            account = null; // Initialize account as null to handle cases where no data is returned
-
-            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0) // Check if the dataset and rows exist
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
             {
-                DataRow row = ds.Tables[0].Rows[0]; // Assume only one row will be returned for a unique account name
+                DataRow row = ds.Tables[0].Rows[0];
 
-                account = new Account
+                Account account = new Account
                 {
                     AccountID = Convert.ToInt32(row["accountID"]),
                     AccountName = row["accountName"].ToString(),
@@ -167,7 +162,37 @@ namespace Project4.Models
                 };
             }
 
-            objCommand.Parameters.Clear(); // Clear parameters to reuse the command object
+            objCommand.Parameters.Clear();
+            return account;
+
+        }
+
+
+        public Account GetAccountByAccountName(string accountName)
+        {
+            objCommand.Parameters.Clear();
+            objCommand.CommandType = CommandType.StoredProcedure;
+            objCommand.CommandText = "GetAccountByAccountName";
+
+            objCommand.Parameters.AddWithValue("@AccountName", accountName);
+
+            ds = dbObj.GetDataSetUsingCmdObj(objCommand);
+
+
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0) 
+            {
+                DataRow row = ds.Tables[0].Rows[0]; 
+
+                Account account = new Account
+                {
+                    AccountID = Convert.ToInt32(row["accountID"]),
+                    AccountName = row["accountName"].ToString(),
+                    AccountType = row["accountType"].ToString(),
+                    AccountPassword = row["accountPassword"].ToString()
+                };
+            }
+
+            objCommand.Parameters.Clear(); 
             return account;
         }
 

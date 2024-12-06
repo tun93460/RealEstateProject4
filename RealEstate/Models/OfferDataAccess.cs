@@ -12,7 +12,7 @@ namespace Project4.Models
         SqlCommand objCommand = new SqlCommand();
         DataSet ds = new DataSet();
 
-        public List<Offer> GetOffersByAgentID(int accountID)
+        public List<Offer> GetOffersByAccountID(int accountID)
         {
             List<Offer> offers = new List<Offer>();
 
@@ -34,13 +34,15 @@ namespace Project4.Models
                         Amount = Convert.ToDouble(row["offerAmount"]),
                         MoveInDate = Convert.ToDateTime(row["moveInDate"]),
                         OfferStatus = row["offerStatus"].ToString(),
+                        SaleType = row["saleType"].ToString(),
+                        NeedsToSell = row["needToSellHome"].ToString(),
                         Listing = new Listing
                         {
                             ListingID = Convert.ToInt32(row["listingID"]),
-                            Home = hda.GetHomeByID(Convert.ToInt32(row["homeID"]))
-                            //Account = ada.GetAccountByID(accountID)
+                            Home = hda.GetHomeByID(Convert.ToInt32(row["homeID"])),
+                            Account = ada.GetAccountByID(accountID)
                         },
-                        ContactInfo = new Contact
+                        Contact = new Contact
                         {
                             OfferContactID = Convert.ToInt32(row["contactID"]),
                             Name = row["name"].ToString(),
@@ -48,15 +50,17 @@ namespace Project4.Models
                             Email = row["email"].ToString(),
                             WorkEmail = row["workEmail"].ToString()
                         },
-
-
-
+                        Contingencies = GetContingenciesByOfferID(Convert.ToInt32(row["offerID"]))
                     };
+                    offers.Add(offer);
                 }
             }
+                return offers;
         }
         public List<Contingency> GetContingenciesByOfferID(int offerID)
         {
+            List<Contingency> contingencies = new List<Contingency>();
+
             objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "GetContingenciesByOfferID";
@@ -65,7 +69,19 @@ namespace Project4.Models
 
             ds = dbObj.GetDataSetUsingCmdObj(objCommand);
 
-            if (ds.Tables[0].)
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow row in ds.Tables[0].Rows)
+                {
+                    Contingency contingency = new Contingency
+                    {
+                        ContingencyName = row["contingenciesName"].ToString(),
+                        ContingencyDescription = row["contingenciesDescription"].ToString(),
+                    };
+                    contingencies.Add(contingency);
+                }
+            }
+            return contingencies;
         }
     }
 }
