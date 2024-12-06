@@ -44,7 +44,7 @@ namespace Project4.Controllers
 			List<Utility> utilities = hda.GetUtilities(); 
 			List<Amenity> amenities = hda.GetAmenities();
 
-			// Passing utilities and amenities to the view
+
 			ViewBag.Utilities = utilities;
 			ViewBag.Amenities = amenities;
 
@@ -93,9 +93,16 @@ namespace Project4.Controllers
                 return NotFound();
             }
 
-            TempData["Home"] = JsonConvert.SerializeObject(home);
+			List<Utility> utilities = hda.GetUtilitiesByHomeID(id);
+			List<Amenity> amenities = hda.GetAmenitiesByHomeID(id);
 
-            return View(home);
+
+			ViewBag.Utilities = utilities;
+			ViewBag.Amenities = amenities;
+
+			TempData["Home"] = JsonConvert.SerializeObject(home);
+
+			return View(home);
         }
 
         [HttpPost]
@@ -389,7 +396,7 @@ namespace Project4.Controllers
             }
 
             Debug.WriteLine("ModelState is invalid. Home creation aborted.");
-            return View("Create", home);
+            return View("Index", home);
         }
 
 

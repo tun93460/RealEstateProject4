@@ -1,7 +1,7 @@
 ﻿@model Project4.Models.Home
 
 <h1>Create Home</h1>
-<form asp-action="AddRoom" method="post">
+<form asp-action="SaveHome" method="post">
     <div class="form-group">
         <label asp-for="Address.Street"></label>
         <input asp-for="Address.Street" class="form-control" placeholder="Street" value="@Model.Address.Street" />
@@ -126,8 +126,9 @@
             }
         </div>
     </div>
-
+@* 
 <h3>Rooms</h3>
+    <form asp-action="AddRoom" method="post">
 <div class="list-group">
     @if (Model != null && Model.Rooms != null && Model.Rooms.Any())
     {
@@ -160,6 +161,7 @@
     }
 </div>
 
+
     <div class="form-group">
         <label>Room Type</label>
         <input name="roomType" class="form-control" placeholder="Room Type" />
@@ -177,6 +179,8 @@
         <input name="roomWidth" type="number" class="form-control" placeholder="Room Width (ft)" />
     </div>
     <button type="submit" class="btn btn-secondary">Add Room</button>
+
+    </form>*@
 
     @* <h3>Images</h3>
     <div class="list-group">
