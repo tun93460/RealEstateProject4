@@ -170,7 +170,63 @@ namespace Project4.Models
             return homes;
         }
 
-        public List<Amenity> GetAmenitiesByHomeID(int homeID)
+		public List<Amenity> GetAmenities()
+		{
+			SqlCommand cmdGetAmenities = new SqlCommand("GetAllAmenities");
+			cmdGetAmenities.CommandType = CommandType.StoredProcedure;
+			cmdGetAmenities.Parameters.Clear(); 
+
+			ds = dbConnect.GetDataSetUsingCmdObj(cmdGetAmenities);
+
+			List<Amenity> amenities = new List<Amenity>(); 
+
+			if (ds.Tables[0].Rows.Count > 0)
+			{
+				foreach (DataRow row in ds.Tables[0].Rows)
+				{
+					Amenity amenity = new Amenity
+					{
+						AmenityID = Convert.ToInt32(row["amenitiesID"]),
+						AmenityType = row["AmenitiesType"].ToString()
+					};
+					amenities.Add(amenity);
+				}
+			}
+
+			cmdGetAmenities.Parameters.Clear();
+			return amenities;
+		}
+
+		public List<Utility> GetUtilities()
+		{
+			objCommand.Parameters.Clear();
+			objCommand.CommandType = CommandType.StoredProcedure;
+			objCommand.CommandText = "GetAllUtilities";
+			objCommand.Parameters.Clear(); 
+
+			ds = dbConnect.GetDataSetUsingCmdObj(objCommand);
+
+			List<Utility> utilities = new List<Utility>(); 
+
+			if (ds.Tables[0].Rows.Count > 0)
+			{
+				foreach (DataRow row in ds.Tables[0].Rows)
+				{
+					Utility utility = new Utility
+					{
+						UtilityID = Convert.ToInt32(row["utilitiesID"]),
+						UtilityType = row["utilitiesType"].ToString()
+					};
+					utilities.Add(utility);
+				}
+			}
+
+			objCommand.Parameters.Clear();
+			return utilities;
+		}
+
+
+		public List<Amenity> GetAmenitiesByHomeID(int homeID)
         {
 
             SqlCommand cmdGetAmenities = new SqlCommand("GetAmenitiesByHomeID");
@@ -265,11 +321,7 @@ namespace Project4.Models
                     {
                         ImageID = Convert.ToInt32(row["imageID"]),
                         ImageCaption = row["imageCaption"].ToString(),
-                        ImageData = row["imageData"] as Byte[],
-                        ImageName = row["ImageName"].ToString(),
-                        ImageSize = Convert.ToInt32(row["iamgeSize"]),
-                        ImageType = row["imageType"].ToString(),
-                        FileExtension = row["FileExtension"].ToString()
+                        ImageData = row["imageData"] as Byte[]
                     };
                     images.Add(image);
                 }
@@ -340,7 +392,7 @@ namespace Project4.Models
             return Convert.ToInt32(result);
         }
 
-        public int CreateImage(byte[] imageData, string imageCaption, string fileExtension, string imageName, string imageType, int imageSize)
+        public int CreateImage(byte[] imageData, string imageCaption)
         {
             SqlCommand cmdImage = new SqlCommand("InsertImage");
             cmdImage.CommandType = CommandType.StoredProcedure;
@@ -348,10 +400,6 @@ namespace Project4.Models
 
             cmdImage.Parameters.AddWithValue("@ImageData", imageData);
             cmdImage.Parameters.AddWithValue("@ImageCaption", imageCaption);
-            cmdImage.Parameters.AddWithValue("@FileExtension", fileExtension);
-            cmdImage.Parameters.AddWithValue("@ImageName", imageName);
-            cmdImage.Parameters.AddWithValue("@ImageType", imageType);
-            cmdImage.Parameters.AddWithValue("@ImageSize", imageSize);
 
             object result = dbConnect.ExecuteScalarFunction(cmdImage);
             return Convert.ToInt32(result);
@@ -443,22 +491,6 @@ namespace Project4.Models
 
             dbConnect.ExecuteScalarFunction(cmdHomeBroker);
         }
-
-        public DataSet GetUtilities()
-        {
-            SqlCommand cmdUtilities = new SqlCommand("GetUtilities");
-            cmdUtilities.CommandType = CommandType.StoredProcedure;
-            cmdUtilities.Parameters.Clear();
-            return dbConnect.GetDataSetUsingCmdObj(cmdUtilities);
-        }
-        public DataSet GetAmenities()
-        {
-            SqlCommand cmdAmenities = new SqlCommand("GetAmenities");
-            cmdAmenities.CommandType = CommandType.StoredProcedure;
-            cmdAmenities.Parameters.Clear();
-            return dbConnect.GetDataSetUsingCmdObj(cmdAmenities);
-        }
-
 
     }
 }

@@ -12,26 +12,16 @@ namespace Project4.Models
         private int imageID;
         private byte[] imageData;
         private string imageCaption;
-        private string fileExtension;
-        private string imageName;
-        private string imageType;
-        private int imageSize;
 
-        public HomeImage(int imageID, byte[] imageData, string imageCaption, 
-            string fileExtension, string imageName, string imageType, int imageSize)
+        public HomeImage(int imageID, byte[] imageData, string imageCaption)
         {
             this.imageID = imageID;
             this.imageData = imageData;
             this.imageCaption = imageCaption;
-            this.fileExtension = fileExtension;
-            this.imageName = imageName;
-            this.imageType = imageType;
-            this.imageSize = imageSize;
         }
 
         public HomeImage()
         {
-
         }
 
         public int ImageID
@@ -46,35 +36,10 @@ namespace Project4.Models
             set { imageData = value; }
         }
 
-        public String ImageCaption
+        public string ImageCaption
         {
             get { return imageCaption; }
             set { imageCaption = value; }
         }
-
-        public String FileExtension
-        {
-            get { return fileExtension; }
-            set { fileExtension = value; }
-        }
-
-        public String ImageName
-        {
-            get { return imageName; }
-            set { imageName = value; }
-        }
-
-        public String ImageType
-        {
-            get { return imageType; }
-            set { imageType = value; }
-        }
-
-        public int ImageSize
-        {
-            get { return imageSize; }
-            set { imageSize = value; }
-        }
-
     }
 }
