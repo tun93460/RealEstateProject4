@@ -10,13 +10,11 @@ namespace Project4.Models
     {
         private int utilityID;
         private string utilityType;
-        private string utilityDescription;
 
-        public Utility(int utilityID, string utilityType, string utilityDescription)
+        public Utility(int utilityID, string utilityType)
         {
             this.utilityID = utilityID;
             this.utilityType = utilityType;
-            this.utilityDescription = utilityDescription;
         }
 
         public Utility()
@@ -36,10 +34,5 @@ namespace Project4.Models
             set { utilityType = value; }
         }
 
-        public String UtilityDescription
-        {
-            get { return utilityDescription; }
-            set { utilityDescription = value; }
-        }
     }
 }

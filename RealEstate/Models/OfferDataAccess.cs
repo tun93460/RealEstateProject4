@@ -11,7 +11,7 @@ namespace Project4.Models
         DBConnect dbObj = new DBConnect();
         SqlCommand objCommand = new SqlCommand();
         DataSet ds = new DataSet();
-
+      
         public List<Offer> GetOffersByAccountID(int accountID)
         {
             List<Offer> offers = new List<Offer>();

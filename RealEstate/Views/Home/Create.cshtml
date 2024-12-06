@@ -38,21 +38,6 @@
         <span asp-validation-for="Price" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Size"></label>
-        <input asp-for="Size" type="number" class="form-control" placeholder="Size (sq ft)" />
-        <span asp-validation-for="Size" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Bedrooms"></label>
-        <input asp-for="Bedrooms" type="number" class="form-control" placeholder="Number of Bedrooms" />
-        <span asp-validation-for="Bedrooms" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Bathrooms"></label>
-        <input asp-for="Bathrooms" type="number" class="form-control" placeholder="Number of Bathrooms" />
-        <span asp-validation-for="Bathrooms" class="text-danger"></span>
-    </div>
-    <div class="form-group">
         <label asp-for="YearBuilt"></label>
         <input asp-for="YearBuilt" type="number" class="form-control" placeholder="Year Built" />
         <span asp-validation-for="YearBuilt" class="text-danger"></span>
@@ -80,31 +65,67 @@
             <option value="Pending">Pending</option>
             <option value="Sold">Sold</option>
         </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
 
-    <div class="mt-4">
-        <h3>Utilities</h3>
-        <div class="list-group">
-            @foreach (Utility utility in Model.Utilities)
-            {
-                <div class="list-group-item">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <strong>@utility.UtilityType</strong>
-                        </span>
-                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#utility-@utility.UtilityType.Replace(" ", "-")">
-                            Details
-                        </button>
-                    </div>
-                    <div class="collapse mt-2" id="utility-@utility.UtilityType.Replace(" ", "-")">
-                        <p class="mb-0 text-muted">@utility.UtilityDescription</p>
-                    </div>
-                </div>
-            }
+        <form asp-action="Divider" method="post">
+        </form>
+
+        <div class="mt-4">
+            <h3>Utilities</h3>
+            <div class="list-group">
+                @if (ViewBag.Utilities != null)
+                {
+                    @foreach (Utility utility in ViewBag.Utilities)
+                    {
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>
+                                    <input type="checkbox" name="selectedUtilities" value="@utility.UtilityID" id="utility-@utility.UtilityID" class="form-check-input">
+                                    <label for="utility-@utility.UtilityID" class="form-check-label">
+                                        @utility.UtilityType
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No utilities available.</p>
+                }
+            </div>
         </div>
-    </div>
+
+        <form asp-action="Divider" method="post">
+        </form>
+
+        <div class="mt-4">
+            <h3>Amenities</h3>
+            <div class="list-group">
+                @if (ViewBag.Amenities != null)
+                {
+                    @foreach (Amenity amenity in ViewBag.Amenities)
+                    {
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>
+                                    <input type="checkbox" name="selectedAmenities" value="@amenity.AmenityID" id="amenity-@amenity.AmenityID" class="form-check-input">
+                                    <label for="amenity-@amenity.AmenityID" class="form-check-label">
+                                        @amenity.AmenityType
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No amenities available.</p>
+                }
+            </div>
+        </div>
+
+        <form asp-action="Divider" method="post">
+            </form>
 
     <div class="mt-4">
         <h3>Rooms</h3>
@@ -120,6 +141,7 @@
                         <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#room-@room.RoomType.Replace(" ", "-")">
                             Details
                         </button>
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </div>
                     <div class="collapse mt-2" id="room-@room.RoomType.Replace(" ", "-")">
                         <p class="mb-0 text-muted">@room.RoomDescription</p>
@@ -131,23 +153,6 @@
     </div>
     </div>
 
-    @if (Model.Rooms != null)
-    {
-        <ul>
-            @foreach (var room in Model.Rooms)
-            {
-                <li>
-                    @room.RoomType
-                    @room.RoomDescription
-                    (@room.RoomLength ft x @room.RoomWidth ft)
-                    <form asp-action="DeleteRoom" method="post">
-                        <input type="hidden" name="roomId" value="@room.RoomID" />
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                </li>
-            }
-        </ul>
-    }
     <form asp-action="AddRoom" method="post">
         <div class="form-group">
             <label>Room Type</label>
@@ -167,21 +172,36 @@
         </div>
         <button type="submit" class="btn btn-secondary">Add Room</button>
     </form>
-    @if (Model.HomeImages != null)
-    {
-        <ul>
-            @foreach (var image in Model.HomeImages)
+    <div class="mt-4">
+        <h3>Images</h3>
+        <div class="list-group">
+            @if (Model.HomeImages != null)
             {
-                <li>
-                    @image.ImageCaption
-                    <form asp-action="DeleteImage" method="post">
-                        <input type="hidden" name="imageId" value="@image.ImageID" />
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                </li>
+                @foreach (var image in Model.HomeImages)
+                {
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="bi bi-image text-primary me-2"></i>
+                                <strong>@image.ImageCaption</strong>
+                            </span>
+                            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#image-@image.ImageID">
+                                View Image
+                            </button>
+                            <form asp-action="DeleteImage" method="post" class="ms-2">
+                                <input type="hidden" name="imageId" value="@image.ImageID" />
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </div>
+                        <div class="collapse mt-2" id="image-@image.ImageID">
+                            <img src="@image.ImageData" class="img-fluid" alt="@image.ImageCaption" />
+                        </div>
+                    </div>
+                }
             }
-        </ul>
-    }
+        </div>
+    </div>
+
     <form asp-action="AddImage" method="post">
         <div class="form-group">
             <label asp-for="ImageFile">Upload Image</label>

@@ -30,27 +30,35 @@ namespace Project4.Controllers
             return View();
         }
 
-        public IActionResult Create()
-        {
-            var home = new Home
-            {
-                Address = new Address(),
-                Rooms = new List<Room>(),
-                Amenities = new List<Amenity>(),
-                Utilities = new List<Utility>(),
-                HomeImages = new List<HomeImage>()
-            };
+		public IActionResult Create()
+		{
+			var home = new Home
+			{
+				Address = new Address(),
+				Rooms = new List<Room>(),
+				Amenities = new List<Amenity>(),
+				Utilities = new List<Utility>(),
+				HomeImages = new List<HomeImage>()
+			};
 
-            TempData["Home"] = JsonConvert.SerializeObject(home);
-            TempData.Keep("Home");
+			List<Utility> utilities = hda.GetUtilities(); 
+			List<Amenity> amenities = hda.GetAmenities();
 
-            return View(home);
-        }
+			// Passing utilities and amenities to the view
+			ViewBag.Utilities = utilities;
+			ViewBag.Amenities = amenities;
+
+			TempData["Home"] = JsonConvert.SerializeObject(home);
+			TempData.Keep("Home");
+
+			return View(home);
+		}
 
 
 
 
-        [HttpPost]
+
+		[HttpPost]
         public IActionResult SearchHomes(string location, string propertyType, int minBedrooms, int minBathrooms, double minPrice, double maxPrice, double minHomeSize)
         {
             List<Home> homes = hda.SearchHomes(location, propertyType, minBedrooms, minBathrooms, minPrice, maxPrice, minHomeSize);
@@ -68,7 +76,14 @@ namespace Project4.Controllers
             return amenities;
         }
 
-        public IActionResult ViewHome(int id)
+		private List<Amenity> GetUtilities(int homeID)
+		{
+			List<Amenity> amenities = hda.GetAmenitiesByHomeID(homeID);
+
+			return amenities;
+		}
+
+		public IActionResult ViewHome(int id)
         {
             ViewData["Title"] = "Viewing Home - ID:" + id;
             Home home = hda.GetHomeByID(id);
@@ -137,7 +152,7 @@ namespace Project4.Controllers
         [HttpPost]
         public IActionResult AddRoom(string roomType, string roomDescription, int roomLength, int roomWidth)
         {
-            string homeJson = TempData["Home"].ToString();
+            string homeJson = TempData["Home"]?.ToString();
             Home home;
 
             if (!string.IsNullOrEmpty(homeJson))
@@ -209,55 +224,157 @@ namespace Project4.Controllers
 
 
         [HttpPost]
-        public IActionResult SaveHome()
+        public IActionResult SaveHome(Home home)
         {
-            string homeJson = TempData["Home"].ToString();
-            Home home;
+            string homeJson = TempData["Home"]?.ToString();
+            Home existingHome;
 
             if (!string.IsNullOrEmpty(homeJson))
             {
-                home = new Home();
+                existingHome = JsonConvert.DeserializeObject<Home>(homeJson);
             }
             else
             {
-                home = JsonConvert.DeserializeObject<Home>(homeJson);
+                existingHome = home;
             }
 
             if (ModelState.IsValid)
             {
-                //update database
+                int totalSize = 0;
+                int totalBedrooms = 0;
+                int totalBathrooms = 0;
 
-                //clear home data
+                foreach (var room in existingHome.Rooms)
+                {
+                    int roomSize = Convert.ToInt32(room.RoomLength) * Convert.ToInt32(room.RoomWidth);
+                    totalSize += roomSize;
+
+                    if (room.RoomType.Equals("Bedroom", StringComparison.OrdinalIgnoreCase))
+                    {
+                        totalBedrooms++;
+                    }
+                    else if (room.RoomType.Equals("Bathroom", StringComparison.OrdinalIgnoreCase))
+                    {
+                        totalBathrooms++;
+                    }
+                }
+
+                existingHome.Size = totalSize;
+                existingHome.Bedrooms = totalBedrooms;
+                existingHome.Bathrooms = totalBathrooms;
+
+                int addressId = hda.CreateAddress(
+                    existingHome.Address.City,
+                    existingHome.Address.State,
+                    existingHome.Address.Street,
+                    Convert.ToInt32(existingHome.Address.Zip)
+                );
+
+                if (addressId <= 0)
+                {
+                    Debug.WriteLine("Failed to create Address. Aborting Home creation.");
+                    return RedirectToAction("Index");
+                }
+
+                int homeId = hda.CreateHome(
+                    existingHome.PropertyType,
+                    Convert.ToInt32(existingHome.Price),
+                    Convert.ToInt32(existingHome.Size),
+                    existingHome.Bedrooms,
+                    Convert.ToString(existingHome.Bathrooms),
+                    Convert.ToString(existingHome.DateEntered),
+                    existingHome.HvacInfo,
+                    Convert.ToString(existingHome.YearBuilt),
+                    existingHome.GarageType,
+                    existingHome.HomeDesc,
+                    Convert.ToInt32(existingHome.Status),
+                    addressId
+                );
+
+                if (homeId <= 0)
+                {
+                    Debug.WriteLine("Failed to create Home. Aborting Home creation.");
+                    return RedirectToAction("Index");
+                }
+
+                foreach (var room in existingHome.Rooms)
+                {
+                    int roomId = hda.CreateRoom(
+                        room.RoomType,
+                        room.RoomDescription,
+                        Convert.ToInt32(room.RoomWidth),
+                        Convert.ToInt32(room.RoomLength)
+                    );
+
+                    if (roomId > 0)
+                    {
+                        hda.LinkHomeWithRoom(homeId, roomId);
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Failed to create Room: {room.RoomType}. Continuing with remaining items.");
+                    }
+                }
+
+                foreach (var amenity in existingHome.Amenities)
+                {
+                    int amenityId = hda.CreateAmenities(amenity.AmenityType);
+
+                    if (amenityId > 0)
+                    {
+                        hda.LinkHomeWithAmenities(homeId, amenityId);
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Failed to create Amenity: {amenity.AmenityType}. Continuing with remaining items.");
+                    }
+                }
+
+                foreach (var utility in existingHome.Utilities)
+                {
+                    int utilityId = hda.CreateUtilities(utility.UtilityType);
+
+                    if (utilityId > 0)
+                    {
+                        hda.LinkHomeWithUtilities(homeId, utilityId);
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Failed to create Utility: {utility.UtilityType}. Continuing with remaining items.");
+                    }
+                }
+
+                foreach (var image in existingHome.HomeImages)
+                {
+                    int imageId = hda.CreateImage(
+                        image.ImageData,
+                        image.ImageCaption
+                    );
+
+                    if (imageId > 0)
+                    {
+                        hda.LinkHomeWithImage(homeId, imageId);
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Failed to create Image: {image.ImageCaption}. Continuing with remaining items.");
+                    }
+                }
+
                 TempData.Remove("Home");
 
-                //success message
-                //direct to index or my homes
                 ViewData["Message"] = "Home has been saved!";
+                Debug.WriteLine($"Home with ID {homeId} successfully created.");
                 return RedirectToAction("Index", "Home");
             }
-            return RedirectToAction("Create", home);
+
+            Debug.WriteLine("ModelState is invalid. Home creation aborted.");
+            return View("Create", home);
         }
 
-        [HttpGet]
-        [HttpPost]
-        public IActionResult SendEmail()
-        {
-            Email emailObj = new Email();
-            string strTo = "tuo76098@temple.edu";
-            string? strFrom = "tun93460@temple.edu";
-            string strSubject = "Offer Accepted";
-            string strMessage = "Congratulations, Your offer has been accepted. Welcome to your new home";
 
-            try
-            {
-                emailObj.SendMail(strTo, strFrom, strSubject, strMessage);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
 
-            return View("SendEmail");
-        }
+
+
     }
 }
