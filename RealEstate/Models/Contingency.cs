@@ -4,6 +4,7 @@ namespace Project4.Models
 {
     public class Contingency
     {
+        private int? contingencyID;
         private string contingencyName;
         private string contingencyDescription;
 
@@ -13,11 +14,19 @@ namespace Project4.Models
             this.contingencyName = "";
         }
 
-        public Contingency(string contingencyDescription, string contingencyName)
+        public Contingency(int? contingencyID, string contingencyDescription, string contingencyName)
         {
             this.contingencyDescription = contingencyDescription;
             this.contingencyName = contingencyName;
         }
+
+        public int? ContingencyID
+        {
+            get { return this.contingencyID; }
+            set { this.contingencyID = value; }
+
+        }
+
 
         [Required(ErrorMessage = "Contingency Description is required")]
         public string ContingencyDescription

@@ -1,11 +1,13 @@
 ﻿using System.Data.SqlClient;
 using System.Data;
 using Utilities;
+using MyClassLibrary;
 
 namespace Project4.Models
 {
     public class AccountDataAccess
     {
+        Encryption enc = new Encryption();
         DBConnect dbObj = new DBConnect();
         SqlCommand objCommand = new SqlCommand();
         DataSet ds = new DataSet();
@@ -25,32 +27,33 @@ namespace Project4.Models
 
             if (ds.Tables[0].Rows.Count > 0)
             {
-                count = Convert.ToInt32(ds.Tables[0].Rows[0]["AccountCount"]);
-
-                if (count > 0)
-                {
+                int count = Convert.ToInt32(ds.Tables[0].Rows[0]["AccountCount"]);
+                if (count > 0) 
                     return count;
-                }
-                else
-                {
+                else 
                     return 0;
-                }
             }
-            objCommand.Parameters.Clear();
             return -1;
         }
 
-        public int RegisterAccount(string accountName, string accountPassword, int personalInfoID, int workInfoID, string accountType, bool rememberMe)
+        public int RegisterAccount(Account account)
         {
+            objCommand.Parameters.Clear();
+
+            account.PersonalInfo.Address.AddressID = RegisterAddress(account.PersonalInfo.Address);
+            account.WorkInfo.Address.AddressID = RegisterAddress(account.WorkInfo.Address);
+            account.PersonalInfo.PersonalInfoID = RegisterPersonalInfo(account.PersonalInfo);
+            account.WorkInfo.WorkInfoID = RegisterWorkInfo(account.WorkInfo);
+
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "InsertAccount";
 
-            objCommand.Parameters.AddWithValue("@DisplayName", accountName);
-            objCommand.Parameters.AddWithValue("@UserPassword", accountPassword);
-            objCommand.Parameters.AddWithValue("@PersonalInfoID", personalInfoID);
-            objCommand.Parameters.AddWithValue("@WorkInfoID", workInfoID);
-            objCommand.Parameters.AddWithValue("@AccountType", accountType);
-            objCommand.Parameters.AddWithValue("@RememberMe", rememberMe);
+            objCommand.Parameters.AddWithValue("@DisplayName", account.AccountName);
+            objCommand.Parameters.AddWithValue("@UserPassword", account.AccountPassword);
+            objCommand.Parameters.AddWithValue("@PersonalInfoID", account.PersonalInfo.PersonalInfoID);
+            objCommand.Parameters.AddWithValue("@WorkInfoID", account.WorkInfo.WorkInfoID);
+            objCommand.Parameters.AddWithValue("@AccountType", account.AccountType);
+            objCommand.Parameters.AddWithValue("@RememberMe", account.RememberMe);
 
             SqlParameter outputAccountID = new SqlParameter("@NewAccountID", SqlDbType.Int)
             {
@@ -60,25 +63,28 @@ namespace Project4.Models
 
             dbObj.DoUpdateUsingCmdObj(objCommand);
 
-            int outputID = (outputAccountID.Value != DBNull.Value) ? (int)outputAccountID.Value : 0;
-
-            objCommand.Parameters.Clear();
-            return outputID;
+            if (outputAccountID.Value != DBNull.Value)
+                return (int)outputAccountID.Value;
+            else
+                return 0;
         }
 
-        public int RegisterAddress(string city, string state, string street, string zip)
+        public int RegisterAddress(Address address)
         {
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "InsertAddress";
 
-            objCommand.Parameters.AddWithValue("@City", city);
-            objCommand.Parameters.AddWithValue("@State", state);
-            objCommand.Parameters.AddWithValue("@Street", street);
-            objCommand.Parameters.AddWithValue("@Zip", zip);
+            objCommand.Parameters.AddWithValue("@City", address.City);
+            objCommand.Parameters.AddWithValue("@State", address.State);
+            objCommand.Parameters.AddWithValue("@Street", address.Street);
+            objCommand.Parameters.AddWithValue("@Zip", address.Zip);
 
-            SqlParameter outputAddressID = new SqlParameter("@NewAddressID", SqlDbType.Int)
+            SqlParameter outputAddressID = new SqlParameter
             {
-                Direction = ParameterDirection.Output
+                ParameterName = "@ReturnValue",
+                Direction = ParameterDirection.ReturnValue,
+                SqlDbType = SqlDbType.Int,
+
             };
             objCommand.Parameters.Add(outputAddressID);
 
@@ -90,15 +96,15 @@ namespace Project4.Models
             return outputID;
         }
 
-        public int RegisterPersonalInfo(int addressID, string personalPhone, string personalEmail)
+        public int RegisterPersonalInfo(PersonalInfo personalInfo)
         {
             objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "InsertPersonalInfo";
 
-            objCommand.Parameters.AddWithValue("@AddressID", addressID);
-            objCommand.Parameters.AddWithValue("@PersonalPhone", personalPhone);
-            objCommand.Parameters.AddWithValue("@PersonalEmail", personalEmail);
+            objCommand.Parameters.AddWithValue("@AddressID", personalInfo.Address.AddressID);
+            objCommand.Parameters.AddWithValue("@PersonalPhone", personalInfo.PersonalPhone);
+            objCommand.Parameters.AddWithValue("@PersonalEmail", personalInfo.PersonalEmail);
 
             SqlParameter outputPersonalInfoID = new SqlParameter("@NewPersonalInfoID", SqlDbType.Int)
             {
@@ -114,16 +120,16 @@ namespace Project4.Models
             return outputID;
         }
 
-        public int RegisterWorkInfo(int addressID, string companyName, string workPhone, string workEmail)
+        public int RegisterWorkInfo(WorkInfo workInfo)
         {
             objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "InserWorkInfo";
 
-            objCommand.Parameters.AddWithValue("@AddressID", addressID);
-            objCommand.Parameters.AddWithValue("@CompanyName", companyName);
-            objCommand.Parameters.AddWithValue("@WorkPhone", workPhone);
-            objCommand.Parameters.AddWithValue("@WorkEmail", workEmail);
+            objCommand.Parameters.AddWithValue("@AddressID", workInfo.Address.AddressID);
+            objCommand.Parameters.AddWithValue("@CompanyName", workInfo.CompanyName);
+            objCommand.Parameters.AddWithValue("@WorkPhone", workInfo.WorkPhone);
+            objCommand.Parameters.AddWithValue("@WorkEmail", workInfo.WorkEmail);
 
             SqlParameter outputWorkInfoID = new SqlParameter("@NewWorkInfoID", SqlDbType.Int)
             {
@@ -144,7 +150,6 @@ namespace Project4.Models
             objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "GetAgentByAgentID";
-
             objCommand.Parameters.AddWithValue("@AccountID", accountID);
 
             ds = dbObj.GetDataSetUsingCmdObj(objCommand);
@@ -152,8 +157,7 @@ namespace Project4.Models
             if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
             {
                 DataRow row = ds.Tables[0].Rows[0];
-
-                Account account = new Account
+                return new Account
                 {
                     AccountID = Convert.ToInt32(row["accountID"]),
                     AccountName = row["accountName"].ToString(),
@@ -162,9 +166,7 @@ namespace Project4.Models
                 };
             }
 
-            objCommand.Parameters.Clear();
-            return account;
-
+            return null;
         }
 
 
@@ -173,17 +175,14 @@ namespace Project4.Models
             objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
             objCommand.CommandText = "GetAccountByAccountName";
-
             objCommand.Parameters.AddWithValue("@AccountName", accountName);
 
             ds = dbObj.GetDataSetUsingCmdObj(objCommand);
 
-
-            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0) 
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
             {
-                DataRow row = ds.Tables[0].Rows[0]; 
-
-                Account account = new Account
+                DataRow row = ds.Tables[0].Rows[0];
+                return new Account
                 {
                     AccountID = Convert.ToInt32(row["accountID"]),
                     AccountName = row["accountName"].ToString(),
@@ -192,8 +191,23 @@ namespace Project4.Models
                 };
             }
 
-            objCommand.Parameters.Clear(); 
-            return account;
+            return null;
+        }
+
+        public bool UpdateAccountPassword(int accountID, string newPassword)
+        {
+            objCommand.Parameters.Clear();
+            objCommand.CommandType = CommandType.StoredProcedure;
+            objCommand.CommandText = "UpdatePassword";
+
+            string encryptedPassword = enc.EncryptPassword(newPassword);
+
+            objCommand.Parameters.AddWithValue("@AccountID", accountID);
+            objCommand.Parameters.AddWithValue("@NewPassword", encryptedPassword);
+
+            int result = dbObj.DoUpdateUsingCmdObj(objCommand);
+
+            return result > 0;
         }
 
     }
