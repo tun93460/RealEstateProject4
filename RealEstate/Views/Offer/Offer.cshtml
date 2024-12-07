@@ -1,130 +1,107 @@
 ﻿@model Project4.Models.Offer
 
-
-
-<h1>Make an Offer to Buy a Home</h1>
+<h1 class="mb-4">Make an Offer to Buy a Home</h1>
 
 <form asp-action="SaveOffer" asp-controller="Offer" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Contact Information</h3>
+            <div class="form-group">
+                <label asp-for="Contact.Name" class="form-label">Your Name</label>
+                <input asp-for="Contact.Name" class="form-control" placeholder="Enter Your Name" />
+                <span asp-validation-for="Contact.Name" class="text-danger"></span>
+            </div>
 
-    <h3>Contact Information</h3>
+            <div class="form-group">
+                <label asp-for="Contact.Email" class="form-label">Email</label>
+                <input asp-for="Contact.Email" class="form-control" placeholder="Enter Your Email" />
+                <span asp-validation-for="Contact.Email" class="text-danger"></span>
+            </div>
 
+            <div class="form-group">
+                <label asp-for="Contact.WorkEmail" class="form-label">Work Email</label>
+                <input asp-for="Contact.WorkEmail" class="form-control" placeholder="Enter Work Email" />
+                <span asp-validation-for="Contact.WorkEmail" class="text-danger"></span>
+            </div>
 
+            <div class="form-group">
+                <label asp-for="Contact.Phone" class="form-label">Phone Number</label>
+                <input asp-for="Contact.Phone" class="form-control" placeholder="Enter Phone Number" />
+                <span asp-validation-for="Contact.Phone" class="text-danger"></span>
+            </div>
+        </div>
 
-    <div class="form-group">
+        <div class="col-md-6">
+            <h3>Offer Details</h3>
+            <div class="form-group">
+                <label asp-for="Amount" class="form-label">Offer Amount</label>
+                <input asp-for="Amount" type="number" class="form-control" placeholder="Enter Offer Amount" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
 
-        <label asp-for="ContactInfo.Name"></label>
+            <div class="form-group">
+                <label asp-for="SaleType" class="form-label">Sale Type</label>
+                <select asp-for="SaleType" class="form-control">
+                    <option value="">Select Sale Type</option>
+                    <option value="ConventionalMortgage">Conventional Mortgage</option>
+                    <option value="Cash">Cash</option>
+                    <option value="AsIs">As-Is (No Contingencies)</option>
+                </select>
+                <span asp-validation-for="SaleType" class="text-danger"></span>
+            </div>
 
-        <input asp-for="ContactInfo.Name" class="form-control" placeholder="Enter Your Name" />
-        <span asp-validation-for="ContactInfo.Name" class="text-danger"></span>
+            <div class="form-group form-check">
+                <input asp-for="NeedsToSell" type="checkbox" class="form-check-input" />
+                <label asp-for="NeedsToSell" class="form-check-label">Need to Sell Home Before Buying?</label>
+                <span asp-validation-for="NeedsToSell" class="text-danger"></span>
+            </div>
 
+            <div class="form-group">
+                <label asp-for="MoveInDate" class="form-label">Move-In Date</label>
+                <input asp-for="MoveInDate" type="date" class="form-control" />
+                <span asp-validation-for="MoveInDate" class="text-danger"></span>
+            </div>
+        </div>
     </div>
 
-    <div class="form-group">
+    <button type="submit" class="btn btn-primary mt-3">Submit Offer</button>
+</form>
 
-        <label asp-for="ContactInfo.Email"></label>
+<p>@ViewData["Error"]</p>
 
-        <input asp-for="ContactInfo.Email" class="form-control" placeholder="Enter Your Email" />
-        <span asp-validation-for="ContactInfo.Email" class="text-danger"></span>
+<div class="form-group mt-4">
+    <label asp-for="Contingencies" class="form-label">Contingencies</label>
 
-    </div>
-
-    <div class="form-group">
-
-        <label asp-for="ContactInfo.WorkEmail"></label>
-
-        <input asp-for="ContactInfo.WorkEmail" class="form-control" placeholder="Enter Work Email" />
-        <span asp-validation-for="ContactInfo.WorkEmail" class="text-danger"></span>
-
-    </div>
-
-    <div class="form-group">
-
-        <label asp-for="ContactInfo.Phone"></label>
-
-        <input asp-for="ContactInfo.Phone" class="form-control" placeholder="Enter Phone Number" />
-        <span asp-validation-for="ContactInfo.Phone" class="text-danger"></span>
-
-    </div>
-
-    <div class="form-group">
-
-        <label asp-for="Amount"></label>
-
-        <input asp-for="Amount" type="number" class="form-control" placeholder="Enter Offer Amount" />
-        <span asp-validation-for="Amount" class="text-danger"></span>
-
-    </div>
-
-    <div class="form-group">
-
-        <label asp-for="SaleType"></label>
-
-        <select asp-for="SaleType" class="form-control">
-
-            <option value="">Select Sale Type</option>
-
-            <option value="ConventionalMortgage">Conventional Mortgage</option>
-
-            <option value="Cash">Cash</option>
-
-            <option value="AsIs">As-Is (No Contingencies)</option>
-
-        </select>
-        <span asp-validation-for="SaleType" class="text-danger"></span>
-
-    </div>
-
-
-
-    <div class="form-group">
-
-        <label asp-for="Contingencies"></label>
-
-        @if (Model.Contingencies != null)
-        {
-            <ul>
-                @foreach (Contingency cont in Model.Contingencies)
-                {
-                    <li>
-                        <h3>@cont.ContingencyName</h3>
+    @if (Model.Contingencies != null && Model.Contingencies.Any())
+    {
+        <ul class="list-group">
+            @foreach (Contingency cont in Model.Contingencies)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5>@cont.ContingencyName</h5>
                         <p>@cont.ContingencyDescription</p>
-                        <form asp-action="DeleteContingency" asp-controller="Home" method="post">
-                            <input type="hidden" name="contName" value="@cont.ContingencyName" />
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
-                    </li>
-                }
-            </ul>
-        }
-
+                    </div>
+                    <form asp-action="DeleteContingency" asp-controller="Offer" method="post" class="d-inline">
+                        <input type="hidden" name="contName" value="@cont.ContingencyName" />
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
         <form asp-action="AddContingency" asp-controller="Offer" method="post">
-            
-            <input asp-for="Contingencies" class="form-control" placeholder="List any contingencies" />
-            <span asp-validation-for="Contingencies" class="text-danger"></span>
-
-            <button type="submit" class="btn btn-secondary">Add Contingency</button>
+            <div class="form-group">
+                <label for="ContingencyName" class="form-label">Contingency Name</label>
+                <input type="text" id="ContingencyName" name="ContingencyName" class="form-control" placeholder="Enter Contingency Name" />
+            </div>
+            <div class="form-group">
+                <label for="ContingencyDescription" class="form-label">Contingency Description</label>
+                <input type="text" id="ContingencyDescription" name="ContingencyDescription" class="form-control" placeholder="Enter Contingency Description" />
+            </div>
+            <button type="submit" class="btn btn-secondary mt-3">Add Contingency</button>
         </form>
-
-    </div>
-
-    <div class="form-group">
-
-        <label asp-for="NeedsToSell"></label>
-
-        <input asp-for="NeedsToSell" type="checkbox" /> Need to Sell Home Before Buying?
-        <span asp-validation-for="NeedsToSell" class="text-danger"></span>
-
-    </div>
-
-    <div class="form-group">
-
-        <label asp-for="MoveInDate"></label>
-
-        <input asp-for="MoveInDate" type="date" class="form-control" />
-        <span asp-validation-for="MoveInDate" class="text-danger"></span>
-
-    </div>
-
-    <button type="submit" class="btn btn-primary">Submit Offer</button>
-
-</form> 
+    }
+</div>
