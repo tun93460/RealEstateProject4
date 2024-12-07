@@ -3,14 +3,19 @@
     public class AccountSecurityQuestion
     {
         private string answerText;
-        private Account account;
-        private SecurityQuestion question;
+        private string accountID;
+        private SecurityQuestion? question;
 
-        public AccountSecurityQuestion(string answerText, Account account, SecurityQuestion question)
+        public AccountSecurityQuestion(string answerText, string accountID, SecurityQuestion? question)
         {
             this.answerText = answerText;
-            this.account = account;
+            this.accountID = accountID;
             this.question = question;
+        }
+
+        public AccountSecurityQuestion()
+        {
+
         }
 
         public string AnswerText
@@ -19,13 +24,13 @@
             set { answerText = value; }
         }
 
-        public Account Account
+        public string AccountID
         {
-            get { return account; }
-            set { account = value; }
+            get { return accountID; }
+            set { accountID = value; }
         }
 
-        public SecurityQuestion Question
+        public SecurityQuestion? Question
         {
             get { return question; }
             set { question = value; }

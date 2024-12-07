@@ -135,20 +135,16 @@
         <label asp-for="Account.RememberMe" class="form-label-check">Remember Me</label>
     </div>
 
-    @{ /* idk if this works / exactly how it works */}
-    @* <div class="form-group">
-        @for (int i = 0; i < Model.SecurityQuestions.Count; i++)
+    <div>
+        @for (int i = 0; i < 3; i++)
         {
-            <label asp-for="SecurityQuestions[i].Question.QuestionID" class="form-controle">Security Question #@i</label>
-            <select asp-for="SecurityQuestions[i].Question.QuestionID">
-                @foreach (Project4.Models.AccountSecurityQuestion question in Model.SecurityQuestions)
-                {
-                    <option value="@question.Question.QuestionID">@question.Question.QuestionText</option>
-                }
-            </select>
-            <input type="text" asp-for="SecurityQuestions[i].AnswerText" placeholer="Answer" />
+            <div>
+                <label>@Model.SecurityQuestions[i].Question.QuestionText</label>
+                <input type="text" name="Answers[@i]" required />
+            </div>
         }
-    </div> *@
+    </div>
+
 
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Register</button>

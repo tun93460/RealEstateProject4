@@ -1,13 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project4.Models;
+using Newtonsoft.Json;
+using System.IO;
+using System.Net;
+using System.Data;
+using MyClassLibrary;
 
 namespace RealEstate.Controllers
 {
     public class AccountController : Controller
     {
+        Encryption enc = new Encryption();
+        QuestionDataAccess qda = new QuestionDataAccess();
         AccountDataAccess ada = new AccountDataAccess();
-        Account account;
         int count;
+
+        private readonly string webApiUrl = "http://localhost:7033/api/Account/";
 
         public IActionResult Logout()
         {
@@ -30,8 +38,9 @@ namespace RealEstate.Controllers
             if (Request.Cookies.ContainsKey("Name") && Request.Cookies.ContainsKey("Password"))
             {
                 
-                //set account role in session
-                HttpContext.Session.SetString("AccountRole", Request.Cookies["Name"]);
+                //set account in session
+                Account account = GetAccount(Request.Cookies["Name"]);
+                HttpContext.Session.SetString("Account", JsonConvert.SerializeObject(account));
 
                 return RedirectToAction("Index", "Home");
             }
@@ -45,15 +54,45 @@ namespace RealEstate.Controllers
 
             if (ModelState.IsValid)
             {
-                // Call stored procedure to authenticate
-                count = ada.AuthenticateAccount(model);
+                //encrypt password
+                model.AccountPassword = enc.EncryptPassword(model.AccountPassword);
 
-                if (count > 0)
+                //replace with api call
+                //count = ada.AuthenticateAccount(model);
+                string modelJson = JsonConvert.SerializeObject(model);
+
+                //create http webrequest
+                WebRequest request = WebRequest.Create(webApiUrl + "Authenticate/");
+                request.Method = "POST";
+                request.ContentLength = modelJson.Length;
+                request.ContentType = "application/json";
+
+                //write json to web request
+                StreamWriter writer = new StreamWriter(request.GetRequestStream());
+                writer.Write(modelJson);
+                writer.Flush();
+                writer.Close();
+
+                //read data from the web response
+                WebResponse response = request.GetResponse();
+                Stream theDataStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(theDataStream);
+                string data = reader.ReadToEnd();
+                reader.Close();
+                response.Close();
+
+                //deserialize data
+                bool result = JsonConvert.DeserializeObject<bool>(data);
+
+                if (result)
                 {
-                    // Account found, get role for session
+                    //replace with api call
                     //account = ada.GetAccountByAccountName(model.AccountName);
 
-                    HttpContext.Session.SetString("AccountName", model.AccountName);
+                    //place account in session
+                    Account account = GetAccount(model.AccountName);
+
+                    HttpContext.Session.SetString("Account", JsonConvert.SerializeObject(account));
                     
                     //check for cookies
                     if (model.RememberMe)
@@ -95,52 +134,55 @@ namespace RealEstate.Controllers
         {
             ViewData["Title"] = "Register";
 
-            //List<AccountSecurityQuestion> questionList = new List<AccountSecurityQuestion>();
-            ////get security questions from db, populate questionList ^
-            ////populate security question ddl
-            ////here are some test questions
-            //SecurityQuestion ques1 = new SecurityQuestion(1, "Pet Name", "Please enter the name of your first pet: ");
-            //SecurityQuestion ques2 = new SecurityQuestion(2, "Street Name", "What is the name of the street you grew up on? ");
-
-            //questionList.Add(new AccountSecurityQuestion("Bella", model.Account, ques1));
-            //questionList.Add(new AccountSecurityQuestion("Kingswood", model.Account, ques2));
-
-
-
-            //ViewData["SecurityQuestions"] = questionList;
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                ViewData["Message"] = string.Join("<br>", errors);
-            }
-
             if (ModelState.IsValid)
             {
-                //register account
-                Address persAddress = model.Account.PersonalInfo.Address;
-                Address workAddress = model.Account.WorkInfo.Address;
-                PersonalInfo personalInfo = model.Account.PersonalInfo;
-                WorkInfo workInfo = model.Account.WorkInfo;
                 Account account = model.Account;
 
-                //insert personal address
-                persAddress.AddressID = ada.RegisterAddress(persAddress.City, persAddress.State, persAddress.Street, persAddress.Zip);
-
-                //insert work address
-                workAddress.AddressID = ada.RegisterAddress(workAddress.City, workAddress.State, workAddress.Street, workAddress.Zip);
-
-                //insert personalInfo
-                personalInfo.PersonalInfoID = ada.RegisterPersonalInfo((int)persAddress.AddressID, personalInfo.PersonalPhone, personalInfo.PersonalEmail);
-
-                //insert workInfo
-                workInfo.WorkInfoID = ada.RegisterWorkInfo((int)workAddress.AddressID, workInfo.CompanyName, workInfo.WorkPhone, workInfo.WorkEmail);
-
-                //insert account
-                account.AccountID = ada.RegisterAccount(account.AccountName, account.AccountPassword, (int)account.PersonalInfo.PersonalInfoID, (int)account.WorkInfo.WorkInfoID, account.AccountType, account.RememberMe);
-
-                //check if acconut was entered successfully
-                if (account.AccountID > 0)
+                List<AccountSecurityQuestion> questions = model.SecurityQuestions;
+                for (int i = 0; i < 3; i++)
                 {
+                    questions.Add(new AccountSecurityQuestion
+                    {
+                        AnswerText = model.Answers[i],
+                        Question = model.SecurityQuestions[i].Question,
+                    });
+                }
+
+                //encrypt password
+                account.AccountPassword = enc.EncryptPassword(account.AccountPassword);
+                
+                //replace with api call
+                //account.AccountID = ada.RegisterAccount(account);
+                string modelJson = JsonConvert.SerializeObject(model);
+
+                //create http webrequest
+                WebRequest request = WebRequest.Create(webApiUrl + "Register/");
+                request.Method = "POST";
+                request.ContentType = "application/json";
+                request.ContentLength = modelJson.Length;
+
+                //wrtie json to web request
+                StreamWriter writer = new StreamWriter(request.GetRequestStream()); 
+                writer.Write(modelJson);
+                writer.Flush();
+                writer.Close();
+
+                //read data from the web response
+                WebResponse response = request.GetResponse();
+                Stream theDataStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(theDataStream);
+                string data = reader.ReadToEnd();
+                reader.Close();
+                response.Close();
+
+                //deserialize data
+                int result = JsonConvert.DeserializeObject<int>(data);
+
+
+                //check if account was entered successfully
+                if (result > 0)
+                {
+                    account.AccountID = result;
                     //check for login cookies
                     if (account.RememberMe)
                     {
@@ -160,26 +202,116 @@ namespace RealEstate.Controllers
                     ViewData["Message"] = "Registration successful! Welcome, " + account.AccountName;
 
                     //add account role to session
-                    HttpContext.Session.SetString("AccountRole", account.AccountType);
+                    HttpContext.Session.SetString("Account", JsonConvert.SerializeObject(account));
 
                     //redirect registered user to homepage
                     return RedirectToAction("Index", "Home");
+                }    
+            }
+            else
+            {
+                //account not added
+                //ViewData["Message"] = "Something went wrong when entering your credentials";
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                ViewData["Message"] = string.Join("<br>", errors);
+            }
+            return View(model);
+        }
+
+        public IActionResult ForgotPassword(int accountID)
+        {
+            List<AccountSecurityQuestion> questions = qda.GetQuestionsByAccountID(accountID);
+
+            Random random = new Random();
+
+            int randomIndex = random.Next(questions.Count);
+
+            AccountSecurityQuestion question = questions[randomIndex];
+                
+            if (question != null)
+            {
+                //display question and get answer
+                return View("SecurityQuestion", question);
+            }
+            
+            return View("Error");
+        }
+
+        
+        public IActionResult VerifySecurityQuestion(int accountID, int questionID, string answerText)
+        {
+            List<AccountSecurityQuestion> questions = qda.GetQuestionsByAccountID(accountID);
+
+            AccountSecurityQuestion question = questions
+                .FirstOrDefault(q => q.Question.QuestionID == questionID);
+            
+            if (question != null)
+            {
+                if (question.AnswerText == answerText)
+                {
+                    return RedirectToAction("ResetPassword");
                 }
                 else
                 {
-                    //account not added
-                    //ViewData["Message"] = "Something went wrong when entering your credentials";
-                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                    ViewData["Message"] = string.Join("<br>", errors);
+                    TempData["ErrorMessage"] = "Incorrect answer. Please try again.";
+                    return View("ForgotPassword", question);
                 }
             }
-            return View();
+            else
+            {
+                return View("Error");
+            }
+
         }
 
-        public IActionResult ForgotPassword()
+        public IActionResult ResetPassword()
         {
-            
-            return View();
+            ResetPasswordViewModel model = new ResetPasswordViewModel
+            {
+                Account = JsonConvert.DeserializeObject<Account>(HttpContext.Session.GetString("Account")),
+                NewPassword = "",
+                ConfirmPassword = "",
+            };
+
+            return View(model);
+        }
+
+        public IActionResult ResetPassword(ResetPasswordViewModel model)
+        {
+            if (model.NewPassword != model.ConfirmPassword)
+            {
+                TempData["ErrorMessage"] = "Passwords do not match";
+                return View(model);
+            }
+
+            bool result = true; // = ada.UpdatePassword(model.AccountID, model.NewPassword);
+
+            if (result)
+            {
+                TempData["Message"] = "Your Password has been reset successfully";
+                return RedirectToAction("Login");
+            }
+
+            TempData["ErrorMessage"] = "An error occured while resetting your password. Pleaes try again";
+            return View(model);
+        }
+
+
+
+        private Account GetAccount(string accountName)
+        {
+            WebRequest request = WebRequest.Create(webApiUrl + "ByName/" + accountName);
+            WebResponse response = request.GetResponse();
+
+            Stream theDataStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(theDataStream);
+            string data = reader.ReadToEnd();
+            reader.Close();
+            response.Close();
+
+            Account account = JsonConvert.DeserializeObject<Account>(data);
+
+            return account;
         }
     }
 }

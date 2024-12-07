@@ -10,10 +10,16 @@ namespace Project4.Controllers
     public class ShowingController : Controller
     {
         ShowingDataAccess sda = new ShowingDataAccess();
+        OfferDataAccess oda = new OfferDataAccess();
 
-        public IActionResult Showing()
+        public IActionResult Showing(int homeID)
         {
-            Showing showing = new Showing();
+            Showing showing = new Showing
+            {
+                Listing = oda.GetListingByHomeID(homeID),
+                Contact = new Contact(),
+               
+            };
 
             return View(showing);
         }

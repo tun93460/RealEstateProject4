@@ -2,13 +2,16 @@
 {
     public class AccountRegistrationViewModel
     {
-        private Account account;
+        private Account? account;
         private List<AccountSecurityQuestion>? securityQuestions;
+        private List<string> answers;
 
-        public AccountRegistrationViewModel(Account account, List<AccountSecurityQuestion> securityQuestions)
+
+        public AccountRegistrationViewModel(Account? account, List<AccountSecurityQuestion> securityQuestions, List<string> answers)
         {
             this.account = account;
             this.securityQuestions = securityQuestions;
+            this.answers = answers;
         }
 
         public AccountRegistrationViewModel()
@@ -16,7 +19,7 @@
 
         }
 
-        public Account Account
+        public Account? Account
         {
             get { return account; }
             set { account = value; }
@@ -26,6 +29,12 @@
         {
             get { return securityQuestions; }
             set { securityQuestions = value; }
+        }
+
+        public List<String> Answers
+        {
+            get { return answers; }
+            set { answers = value; }
         }
 
     }

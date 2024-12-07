@@ -12,20 +12,37 @@ namespace Project4.Controllers
     {
         OfferDataAccess oda = new OfferDataAccess();
 
-        public IActionResult Offer()
+        public IActionResult Offer(int id)
         {
-            Offer offer = new Offer();
+            Offer offer = new Offer
+            {
+                Contact = new Contact(),
+                Listing = oda.GetListingByHomeID(id),
+            };
+
 
             return View(offer);
         }
 
-        public IActionResult SubmitOffer(Offer offer)
+        public IActionResult SaveOffer(Offer offer)
         {
+
+            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                // Log or print each validation error
+                ViewData["Error"] = error.ErrorMessage;  // Or log it to a file, etc.
+            }
 
             if (ModelState.IsValid)
             {
-                //add to database
-                //oda.InsertOffer(offer);
+                //add offer to database
+                offer.OfferID = oda.InsertOffer(offer);
+                offer.Contact.OfferContactID = oda.InsertContact(offer.Contact);
+                for (int i = 0; i < offer.Contingencies.Count; i++)
+                {
+                    offer.Contingencies[i].ContingencyID = oda.InsertContingencies(offer.Contingencies[i]);
+                    oda.InsertOfferContingencies((int)offer.OfferID, (int)offer.Contingencies[i].ContingencyID);
+                }
 
                 //redirect to home view
                 ViewData["Message"] = "Your offer has been submitted.";
@@ -62,7 +79,7 @@ namespace Project4.Controllers
         public IActionResult DenyOffer(int offerID, int accountID)
         {
             //delete offer
-            //oda.DeleteOffer(offerID)
+            oda.DeleteOffer(offerID);
 
             List<Offer> offers = oda.GetOffersByAccountID(accountID);
 
@@ -76,8 +93,7 @@ namespace Project4.Controllers
         {
             if (offer != null)
             {
-                offer.OfferStatus = "Accepted";
-                //update offerstatus in db
+
 
                 Email emailObj = new Email();
                 try
@@ -91,7 +107,8 @@ namespace Project4.Controllers
                 }
                 catch (Exception ex) 
                 {
-
+                    Debug.WriteLine("Error sending email: " + ex.Message);
+                    TempData["Error"] = "Unable to send email.";
                 }
                 TempData["Message"] = "Offer with ID: " + offer.OfferID + "has been accepted";
             }
@@ -103,25 +120,5 @@ namespace Project4.Controllers
             return RedirectToAction("GetOffers");
         }
 
-
-
-        public IActionResult Email(string offerStatus)
-        {
-            Email emailObj = new Email();
-            String strTo = "tuo84072@temple.edu";
-            String? strFrom = HttpContext.Session.GetString("BrokerEmail");
-            String strSubject = "Offer Accepted";
-            String strMessage = "Congratulations, Your offer has been accepted. Welcome to your new home";
-            try
-            {
-                emailObj.SendMail(strTo, strFrom, strSubject, strMessage);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-
-            return View();
-        }
     }
 }

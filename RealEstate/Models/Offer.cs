@@ -15,7 +15,7 @@ namespace Project4.Models
 
         private string saleType;
 
-        private string needsToSell;
+        private string? needsToSell;
 
         private DateTime moveInDate;
 
@@ -31,12 +31,12 @@ namespace Project4.Models
         public Offer()
 
         {
-
+            Contingencies = new List<Contingency>();
         }
 
 
 
-        public Offer(int? offerID, Contact? contact, double amount, string saleType, string needsToSell,
+        public Offer(int? offerID, Contact? contact, double amount, string saleType, string? needsToSell,
 
             DateTime moveInDate, string offerStatus, List<Contingency>? contingencies, Listing? listing)
 
@@ -88,6 +88,7 @@ namespace Project4.Models
 
 
         [Required(ErrorMessage = "Amount is required")]
+        [Range(0, double.MaxValue, ErrorMessage = "Amount must be positive")]
         public double Amount
 
         {
@@ -110,9 +111,7 @@ namespace Project4.Models
 
         }
 
-
-        [Required(ErrorMessage = "Field is required")]
-        public string NeedsToSell
+        public string? NeedsToSell
 
         {
 

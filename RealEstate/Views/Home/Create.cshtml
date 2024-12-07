@@ -1,36 +1,26 @@
-﻿@model Project4.Models.Home
+﻿@model Project4.Models.HomeCreateViewModel
 
 <h1>Create Home</h1>
 <form asp-action="SaveHome" method="post">
     <div class="form-group">
-        <label asp-for="Address.Street"></label>
-        <input asp-for="Address.Street" class="form-control" placeholder="Street" value="@Model.Address.Street" />
-        <span asp-validation-for="Address.Street" class="text-danger"></span>
+        <label asp-for="Street"></label>
+        <input asp-for="Street" class="form-control" placeholder="Street" value="@Model.Street" />
+        <span asp-validation-for="Street" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Address.City"></label>
-        <input asp-for="Address.City" class="form-control" placeholder="City" value="@Model.Address.City" />
-        <span asp-validation-for="Address.City" class="text-danger"></span>
+        <label asp-for="City"></label>
+        <input asp-for="City" class="form-control" placeholder="City" value="@Model.City" />
+        <span asp-validation-for="City" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Address.State"></label>
-        <input asp-for="Address.State" class="form-control" placeholder="State" value="@Model.Address.State" />
-        <span asp-validation-for="Address.State" class="text-danger"></span>
+        <label asp-for="State"></label>
+        <input asp-for="State" class="form-control" placeholder="State" value="@Model.State" />
+        <span asp-validation-for="State" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Address.Zip"></label>
-        <input asp-for="Address.Zip" class="form-control" placeholder="Zip Code" value="@Model.Address.Zip" />
-        <span asp-validation-for="Address.Zip" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="PropertyType"></label>
-        <select asp-for="PropertyType" class="form-control-select">
-            <option value="">Select a property Type</option>
-            <option value="Condo" selected="@Model.PropertyType == " Condo"">Condo</option>
-            <option value="Townhouse" selected="@Model.PropertyType == " Townhouse"">Townhouse</option>
-            <option value="Single Family" selected="@Model.PropertyType == " Single Family"">Single Family</option>
-            <option value="Multi Family" selected="@Model.PropertyType == " Multi Family"">Multi Family</option>
-        </select>
+        <label asp-for="Zip"></label>
+        <input asp-for="Zip" class="form-control" placeholder="Zip Code" value="@Model.Zip" />
+        <span asp-validation-for="Zip" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Price"></label>
@@ -126,62 +116,7 @@
             }
         </div>
     </div>
-@* 
-<h3>Rooms</h3>
-    <form asp-action="AddRoom" method="post">
-<div class="list-group">
-    @if (Model != null && Model.Rooms != null && Model.Rooms.Any())
-    {
-        @foreach (Room room in Model.Rooms)
-        {
-            @if (!string.IsNullOrEmpty(room.RoomType))
-            {
-                <div class="list-group-item">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <strong>@room.RoomType</strong>
-                        </span>
-                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#room-@room.RoomType.Replace(" ", "-")">
-                            Details
-                        </button>
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </div>
-                    <div class="collapse mt-2" id="room-@room.RoomType.Replace(" ", "-")">
-                        <p class="mb-0 text-muted">@room.RoomDescription</p>
-                        <p class="mb-0 text-muted">Dimensions: @room.RoomLength X @room.RoomWidth</p>
-                    </div>
-                </div>
-            }
-        }
-    }
-    else
-    {
-        <p>No rooms available.</p>
-    }
-</div>
-
-
-    <div class="form-group">
-        <label>Room Type</label>
-        <input name="roomType" class="form-control" placeholder="Room Type" />
-    </div>
-    <div class="form-group">
-        <label>Room Description</label>
-        <textarea name="roomDescription" class="form-control" placeholder="Room Description"></textarea>
-    </div>
-    <div class="form-group">
-        <label>Room Length</label>
-        <input name="roomLength" type="number" class="form-control" placeholder="Room Length (ft)" />
-    </div>
-    <div class="form-group">
-        <label>Room Width</label>
-        <input name="roomWidth" type="number" class="form-control" placeholder="Room Width (ft)" />
-    </div>
-    <button type="submit" class="btn btn-secondary">Add Room</button>
-
-    </form>*@
-
+    
     @* <h3>Images</h3>
     <div class="list-group">
     @if (Model.HomeImages != null)
@@ -222,5 +157,64 @@
     <button type="submit" class="btn btn-secondary">Add Image</button>
     </form> *@
 
-    <button type="submit" class="btn btn-primary">Save Home</button>
+        <button type="submit" class="btn btn-primary">Save Home</button>
+    
+</form>
+
+<h3>Rooms</h3>
+<form asp-action="AddRoom" method="post" asp-controller="Home">
+    <div class="list-group">
+        @if (Model != null && Model.Rooms != null && Model.Rooms.Any())
+        {
+            @foreach (HomeCreateViewModel room in Model.Rooms)
+            {
+                @if (!string.IsNullOrEmpty(room.RoomType))
+                {
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <strong>@room.RoomType</strong>
+                            </span>
+                            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#room-@room.RoomType.Replace(" ", "-")">
+                                Details
+                            </button>
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </div>
+                        <div class="collapse mt-2" id="room-@room.RoomType.Replace(" ", "-")">
+                            <p class="mb-0 text-muted">@room.RoomDescription</p>
+                            <p class="mb-0 text-muted">Dimensions: @room.RoomLength X @room.RoomWidth</p>
+                        </div>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <p>No rooms available.</p>
+        }
+    </div>
+
+
+    <div class="form-group">
+        <label>Room Type</label>
+
+        <input name="roomType" class="form-control" placeholder="Room Type" />
+    </div>
+    <div class="form-group">
+        <label>Room Description</label>
+        <textarea name="roomDescription" class="form-control" placeholder="Room Description"></textarea>
+    </div>
+    <div class="form-group">
+        <label>Room Length</label>
+        <input name="roomLength" type="number" class="form-control" placeholder="Room Length (ft)" />
+    </div>
+    <div class="form-group">
+        <label>Room Width</label>
+        <input name="roomWidth" type="number" class="form-control" placeholder="Room Width (ft)" />
+    </div>
+
+    <button type="submit" class="btn btn-secondary">Add Room</button>
+
+
 </form>

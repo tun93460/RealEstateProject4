@@ -84,7 +84,7 @@
                     <div class="card-body">
                         <h5 class="card-title">@h.PropertyType</h5>
                         <p class="card-text">Price: $@h.Price</p>
-                        <p class="card-text">Address: @h.Address.Street @h.Address.City, @h.Address.State @h.Address.Zip</p>
+                        <p class="card-text">Address: @h.Address</p>
                         <a asp-controller="Home" asp-action="ViewHome" asp-route-id="@h.HomeID" class="btn btn-primary">View Home</a>
                     </div>
                 </div>

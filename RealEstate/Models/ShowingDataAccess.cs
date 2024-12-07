@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using Microsoft.JSInterop.Implementation;
 using Utilities;
 
 namespace Project4.Models
@@ -17,7 +18,7 @@ namespace Project4.Models
 
             objCommand.Parameters.Clear();
             objCommand.CommandType = CommandType.StoredProcedure;
-            objCommand.CommandText = "GetShowingsByAgentID";
+            objCommand.CommandText = "GetShowingByAgentID";
 
             objCommand.Parameters.AddWithValue("@AccountID", accountID);
 
@@ -51,7 +52,29 @@ namespace Project4.Models
             return showings;
         }
 
+        public int InsertShowing(Showing showing)
+        {
+            objCommand.Parameters.Clear();
+            objCommand.CommandType = CommandType.StoredProcedure;
+            objCommand.CommandText = "InsertShowing";
 
+            objCommand.Parameters.AddWithValue("@ContactID", showing.Contact.OfferContactID);
+            objCommand.Parameters.AddWithValue("@ListingID", showing.Listing.ListingID);
+            objCommand.Parameters.AddWithValue("@ShowingTime", showing.ShowingDate);
 
+            SqlParameter outputShowingID = new SqlParameter("@NewShowingID", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.Output
+            };
+            objCommand.Parameters.Add(outputShowingID);
+
+            dbObj.DoUpdateUsingCmdObj(objCommand);
+
+            int outputID = (outputShowingID.Value != DBNull.Value) ? (int)outputShowingID.Value : 0;
+
+            objCommand.Parameters.Clear();
+            return outputID;
+
+        }
     }
 }

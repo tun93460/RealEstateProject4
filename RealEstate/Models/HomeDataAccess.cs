@@ -12,10 +12,12 @@ namespace Project4.Models
         SqlCommand objCommand = new SqlCommand();
         DataSet ds = new DataSet();
         List<Home> homes = new List<Home>();
+        List<Address> addresses = new List<Address>();
         List<Amenity> amenities = new List<Amenity>();
         List<Utility> utilities = new List<Utility>();
         List<Room> rooms = new List<Room>();
         List<HomeImage> images = new List<HomeImage>();
+        Address address;
         Home home;
         Amenity amenity;
         Utility utility;
@@ -97,6 +99,7 @@ namespace Project4.Models
 
         public List<Home> GetAllHomeIDs()
         {
+
             SqlCommand cmdSearchHomes = new SqlCommand("GetAllHomeIDs");
             cmdSearchHomes.CommandType = CommandType.StoredProcedure;
 
@@ -107,12 +110,46 @@ namespace Project4.Models
                 foreach (DataRow row in ds.Tables[0].Rows)
                 {
                     home = GetHomeByID(Convert.ToInt32(row["homeID"]));
+                   
+                    address = GetAddressByHomeID(Convert.ToInt32(row["homeID"]));
+                    addresses.Add(address);
+                    home.Address = address;
                     homes.Add(home);
                 }
             }
 
             return homes;
         }
+
+        public Address GetAddressByHomeID(int homeID)
+        {
+            objCommand.Parameters.Clear();
+            objCommand.CommandType = CommandType.StoredProcedure;
+            objCommand.CommandText = "GetAddressByHomeID";
+            objCommand.Parameters.AddWithValue("@HomeID", homeID);
+
+            ds = dbConnect.GetDataSetUsingCmdObj(objCommand);
+
+            Address address = null;
+
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                DataRow row = ds.Tables[0].Rows[0];
+
+                address = new Address
+                {
+                    Street = row["Street"].ToString(),
+                    City = row["City"].ToString(),
+                    State = row["State"].ToString(),
+                    Zip = row["Zip"].ToString()
+                };
+            }
+
+            objCommand.Parameters.Clear();
+            return address;
+        }
+
+
 
         public List<Home> SearchHomes(string location, string propertyType, int minBedrooms, int minBathrooms, double minPrice, double maxPrice, double minHomeSize)
         {
@@ -331,8 +368,11 @@ namespace Project4.Models
 
         public int CreateHome(string propertyType, int homeSizeTotal, int bedroomCount, int bathroomCount, string yearBuilt, string garage, string description, string askingPrice, string status, string listingDate, int homeAddressID, int brokerID)
         {
+            SqlConnection connection = dbConnect.GetConnection();
+            connection.Open();
             SqlCommand cmdHome = new SqlCommand("InsertHome");
             cmdHome.CommandType = CommandType.StoredProcedure;
+
             cmdHome.Parameters.Clear();
 
             cmdHome.Parameters.AddWithValue("@PropType", propertyType);
@@ -345,13 +385,17 @@ namespace Project4.Models
             cmdHome.Parameters.AddWithValue("@AskingPrice", askingPrice);
             cmdHome.Parameters.AddWithValue("@Status", status);
             cmdHome.Parameters.AddWithValue("@DateEntered", DateTime.Now);
-
             cmdHome.Parameters.AddWithValue("@HomeAddressID", homeAddressID);
             cmdHome.Parameters.AddWithValue("@BrokerID", brokerID);
 
-            object result = dbConnect.ExecuteScalarFunction(cmdHome);
+            cmdHome.Connection = dbConnect.GetConnection();
+            object result = cmdHome.ExecuteScalar();
+            connection.Close();
             return Convert.ToInt32(result);
+
+          
         }
+
 
         public int CreateAmenities(string amenitiesType)
         {
@@ -407,8 +451,11 @@ namespace Project4.Models
 
         public int CreateAddress(string city, string state, string street, int zip)
         {
+            SqlConnection connection = dbConnect.GetConnection();
+            connection.Open();
             SqlCommand cmdAddress = new SqlCommand("InsertAddress");
             cmdAddress.CommandType = CommandType.StoredProcedure;
+
             cmdAddress.Parameters.Clear();
 
             cmdAddress.Parameters.AddWithValue("@City", city);
@@ -416,9 +463,12 @@ namespace Project4.Models
             cmdAddress.Parameters.AddWithValue("@Street", street);
             cmdAddress.Parameters.AddWithValue("@Zip", zip);
 
-            object result = dbConnect.ExecuteScalarFunction(cmdAddress);
+            cmdAddress.Connection = connection;
+            object result = cmdAddress.ExecuteScalar();
+            connection.Close();
             return Convert.ToInt32(result);
         }
+
 
         public void LinkHomeWithAddress(int homeID, int addressID)
         {

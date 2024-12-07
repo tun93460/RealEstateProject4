@@ -10,7 +10,6 @@
                 <th>Home</th>
                 <th>Amount</th>
                 <th>Sale Type</th>
-                <th>Status</th>
                 <th>Move-in Date</th>
                 <th>Contact Details</th>
                 <th>Contingencies</th>
@@ -24,7 +23,6 @@
                     <td>ID:@offer.Listing.Home.HomeID - @offer.Listing.Home.PropertyType</td>
                     <td>@offer.Amount.ToString("C")</td>
                     <td>@offer.SaleType</td>
-                    <td>@offer.OfferStatus</td>
                     <td>@offer.MoveInDate</td>
                     <td>
                         @if (offer.Contact != null)
