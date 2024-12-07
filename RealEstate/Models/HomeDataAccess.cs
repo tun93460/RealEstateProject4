@@ -451,8 +451,11 @@ namespace Project4.Models
 
         public int CreateAddress(string city, string state, string street, int zip)
         {
+            SqlConnection connection = dbConnect.GetConnection();
+            connection.Open();
             SqlCommand cmdAddress = new SqlCommand("InsertAddress");
             cmdAddress.CommandType = CommandType.StoredProcedure;
+
             cmdAddress.Parameters.Clear();
 
             cmdAddress.Parameters.AddWithValue("@City", city);
@@ -460,9 +463,12 @@ namespace Project4.Models
             cmdAddress.Parameters.AddWithValue("@Street", street);
             cmdAddress.Parameters.AddWithValue("@Zip", zip);
 
-            object result = dbConnect.ExecuteScalarFunction(cmdAddress);
+            cmdAddress.Connection = connection;
+            object result = cmdAddress.ExecuteScalar();
+            connection.Close();
             return Convert.ToInt32(result);
         }
+
 
         public void LinkHomeWithAddress(int homeID, int addressID)
         {
