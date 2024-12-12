@@ -7,8 +7,8 @@ using MyClassLibrary;
 
 namespace AccountAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/account")]
+    [Produces("application/json")]
     public class AccountController : ControllerBase
     {
         Encryption enc = new Encryption();
@@ -25,9 +25,9 @@ namespace AccountAPI.Controllers
 
             if (account != null)
             {
-                string decryptedPassword = enc.DecryptPassword(account.AccountPassword);
+                //string decryptedPassword = enc.DecryptPassword(account.AccountPassword);
 
-                if (decryptedPassword == model.AccountPassword)
+                if (account.AccountPassword == model.AccountPassword)
                 {
                     return true;
                 }

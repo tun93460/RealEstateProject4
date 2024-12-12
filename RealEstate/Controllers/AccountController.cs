@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Data;
 using MyClassLibrary;
+using System.Diagnostics;
 
 namespace RealEstate.Controllers
 {
@@ -15,7 +16,7 @@ namespace RealEstate.Controllers
         AccountDataAccess ada = new AccountDataAccess();
         int count;
 
-        private readonly string webApiUrl = "http://localhost:7033/api/Account/";
+        private readonly string webApiUrl = "http://localhost:7033/api/account/";
 
         public IActionResult Logout()
         {
@@ -50,31 +51,37 @@ namespace RealEstate.Controllers
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
         {
+            string apiUrl = "https://localhost:7033/api/account/Authenticate";
             ViewData["Title"] = "Login";
 
             if (ModelState.IsValid)
             {
                 //encrypt password
-                model.AccountPassword = enc.EncryptPassword(model.AccountPassword);
+                //model.AccountPassword = enc.EncryptPassword(model.AccountPassword);
 
                 //replace with api call
                 //count = ada.AuthenticateAccount(model);
-                string modelJson = JsonConvert.SerializeObject(model);
+              
 
                 //create http webrequest
-                WebRequest request = WebRequest.Create(webApiUrl + "Authenticate/");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
                 request.Method = "POST";
-                request.ContentLength = modelJson.Length;
+                // request.ContentLength = modelJson.Length;
                 request.ContentType = "application/json";
 
+                Debug.WriteLine("sending the request" + request.ToString());
                 //write json to web request
+                string modelJson = JsonConvert.SerializeObject(model);
+
                 StreamWriter writer = new StreamWriter(request.GetRequestStream());
                 writer.Write(modelJson);
                 writer.Flush();
                 writer.Close();
 
+                Debug.WriteLine("writer: " + writer.ToString() + modelJson);
+
                 //read data from the web response
-                WebResponse response = request.GetResponse();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream theDataStream = response.GetResponseStream();
                 StreamReader reader = new StreamReader(theDataStream);
                 string data = reader.ReadToEnd();
