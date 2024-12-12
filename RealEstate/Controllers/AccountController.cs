@@ -16,7 +16,7 @@ namespace RealEstate.Controllers
         AccountDataAccess ada = new AccountDataAccess();
         int count;
 
-        private readonly string webApiUrl = "http://localhost:7033/api/account/";
+        private readonly string webApiUrl = "https://localhost:7033/api/account/";
 
         public IActionResult Logout()
         {
